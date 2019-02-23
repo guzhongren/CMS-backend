@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  posgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: '000000'
+      POSTGRES_USER: 'postgres'
+    ports:
+      - 5432:5432
+    volumes:
+      - data:/var/lib/postgresql/data
+    deploy:
+      mode: replicated
+      replicas: 1
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+      update_config:
+        parallelism: 1
+        delay: 10s
+      placement:
+        constraints:
+          - node.role == manager
+volumes:
+  data:
+    external: true
