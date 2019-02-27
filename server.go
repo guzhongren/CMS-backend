@@ -5,11 +5,12 @@ import (
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
+	log "github.com/sirupsen/logrus"
 )
 
 func main() {
-	// logrus.SetLevel(logrus.DebugLevel)
-	// logrus.SetFormatter(&logrus.JSONFormatter{})
+	log.SetLevel(log.DebugLevel)
+	log.SetFormatter(&log.JSONFormatter{})
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
