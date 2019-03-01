@@ -36,8 +36,12 @@ func main() {
 
 	e.GET("/", func(c echo.Context) error {
 		user := User{}
-		user.getAllUser(db)
-		return c.String(http.StatusOK, "Hello, world")
+		userList, err := user.getAllUser(db)
+		if err != nil {
+			log.Fatal(err)
+			return nil
+		}
+		return c.JSON(http.StatusOK, userList)
 	})
 
 	h := &handler{}
