@@ -12,12 +12,12 @@ import (
 )
 
 var (
-	db *sql.DB
+	db   *sql.DB
+	conf *Conf
 )
 
 func main() {
 	log.SetLevel(log.DebugLevel)
-	// log.SetFormatter(&log.JSONFormatter{})
 	e := echo.New()
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
@@ -26,17 +26,21 @@ func main() {
 		AllowOrigins: []string{"*"},
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
+	utils := Utils{}
+	utils.LoadConfig()
+	log.Info(conf)
 	auth := auth{}
 	var IsLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte("secret"),
 		Skipper:    auth.skipper,
 	})
-	db = getDB("47.95.247.139", 5432, "postgres", "000000", "cms")
+	dbInfo := conf.DB
+	db = getDB(dbInfo.Host, dbInfo.Port, dbInfo.Username, dbInfo.Password, dbInfo.Db)
 	defer db.Close()
 
 	e.GET("/", func(c echo.Context) error {
 		user := User{}
-		userList, err := user.getAllUser(db)
+		userList, err := user.getAllUsers()
 		if err != nil {
 			log.Fatal(err)
 			return nil

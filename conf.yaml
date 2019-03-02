@@ -1,6 +1,7 @@
 cms:
   db:
     host: 47.95.247.139
+    port: 5432
     username: postgres
     password: 000000
     db: cms

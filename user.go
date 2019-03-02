@@ -1,18 +1,16 @@
 package main
 
 import (
-	"database/sql"
-
 	log "github.com/sirupsen/logrus"
 )
 
 type User struct {
-	Id     int    `json: "id`
-	Name   string `json: "name"`
-	RoleId string `json: "roleid"`
+	Id     int    `json:"id"`
+	Name   string `json:"name"`
+	RoleId string `json:"roleid"`
 }
 
-func (user User) getAllUser(db *sql.DB) ([]User, error) {
+func (user User) getAllUsers() ([]User, error) {
 	rows, err := db.Query("select id, roleid ,name from b_user")
 	if err != nil {
 		log.Warn("查询出错")
