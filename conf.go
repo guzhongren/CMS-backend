@@ -9,6 +9,8 @@ type DB struct {
 }
 type CMS struct {
 	DB
+	Version string `yaml:"version"`
+	Secret  string `yaml:"secret"`
 }
 type Conf struct {
 	CMS

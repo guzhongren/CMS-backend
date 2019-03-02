@@ -1,6 +1,9 @@
 package main
 
 import (
+	"net/http"
+
+	"github.com/labstack/echo"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -10,11 +13,11 @@ type User struct {
 	RoleId string `json:"roleid"`
 }
 
-func (user User) getAllUsers() ([]User, error) {
+func (user User) getAllUsers(c echo.Context) error {
 	rows, err := db.Query("select id, roleid ,name from b_user")
 	if err != nil {
 		log.Warn("查询出错")
-		return nil, err
+		return err
 	}
 	var userList = []User{}
 	for rows.Next() {
@@ -22,11 +25,18 @@ func (user User) getAllUsers() ([]User, error) {
 		err := rows.Scan(&user.Id, &user.RoleId, &user.Name)
 		if err != nil {
 			log.Warn("处理查询结果出错", err)
-			return nil, err
+			return c.JSON(http.StatusExpectationFailed, &Response{
+				Success: false,
+				Result:  "",
+				Message: "查询出错",
+			})
 		}
 		userList = append(userList, user)
 	}
-	log.Info(userList)
-	return userList, nil
-
+	log.Info("用户数据：", userList)
+	return c.JSON(http.StatusOK, &Response{
+		Success: true,
+		Result:  userList,
+		Message: "",
+	})
 }

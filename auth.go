@@ -30,8 +30,7 @@ func (auth) skipper(c echo.Context) bool {
 func (auth) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
-
-	// in db
+	// 从数据库中操作
 	if username == "jon" && password == "password" {
 		token := jwt.New(jwt.SigningMethodHS256)
 		claims := token.Claims.(jwt.MapClaims)
@@ -39,12 +38,19 @@ func (auth) Login(c echo.Context) error {
 		claims["admin"] = false
 		claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
-		t, err := token.SignedString([]byte("secret"))
+		t, err := token.SignedString([]byte(conf.Secret))
 		if err != nil {
 			return err
 		}
-		return c.JSON(http.StatusOK, map[string]string{
-			"token": t,
+		type Token struct {
+			Token string `json:"token"`
+		}
+		return c.JSON(http.StatusOK, &Response{
+			Success: true,
+			Result: Token{
+				Token: t,
+			},
+			Message: "",
 		})
 	}
 	return echo.ErrUnauthorized
