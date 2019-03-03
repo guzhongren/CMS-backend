@@ -1,4 +1,9 @@
 cms:
+  app:
+    addr: ":1234"
+    cors_origins:
+      - http://localhost:8080
+      - http://127.0.0.1:8080
   db:
     host: 47.95.247.139
     port: 5432

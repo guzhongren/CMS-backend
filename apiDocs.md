@@ -1,54 +1,71 @@
-# API
+# API 详细说明
 
-## Login
+## 接口前置路径
 
-**Url**
+```string
+http://localhost:1234/api/v1
+```
 
-`http://localhost:1234/api/v1/login`
+## login
+
+**POST**
 
 **Queyr Parameters**
 
-username: jon
-password: password
-
-Result
-
 ```json
-success": true,
-"result":{
-    "token": TOKEN,
-},
-"message": ""
-
+{
+    username: jon       用户名
+    password: password  密码
+}
 ```
-
-## getUsers
-
-**Url**
-
-http://localhost:1234/api/v1/users
-
-**HEADERS**
-
-Authorization: "Bearer TOKEN"
 
 **Result**
 
 ```json
 {
-"success": true,
-"result":[
-    {
-    "id": 1,
-    "name": "张三",
-    "roleid": "1"
+    success": true,
+    "result":{
+        "token": "TOKEN",
     },
-    {
-    "id": 2,
-    "name": "李四",
-    "roleid": "2"
-    }
-],
-"message": ""
+    "message": ""
+}
+
+```
+
+## logout
+
+**GET**
+
+# HEADERS
+
+> **以下接口请求需要设置Header**
+
+```
+Authorization: "Bearer TOKEN" # TOKEN是登录的返回值
+```
+## users
+
+**GET**
+
+
+
+**Result**
+
+```json
+{
+    "success": true,
+    "result":[
+        {
+        "id": 1,
+        "name": "张三",
+        "roleid": "1"
+        },
+        {
+        "id": 2,
+        "name": "李四",
+        "roleid": "2"
+        }
+    ],
+    "message": ""
 }
 ```

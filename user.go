@@ -13,6 +13,15 @@ type User struct {
 	RoleId string `json:"roleid"`
 }
 
+func (user User) getUserByName(userName string) (*User, error) {
+	err := db.QueryRow("select id, name, roleid from b_user where name=$1", userName).Scan(&user.Id, &user.Name, &user.RoleId)
+	if err != nil {
+		log.Warn("查询用户出错", err)
+		return &User{}, err
+	}
+	return &user, nil
+}
+
 func (user User) getAllUsers(c echo.Context) error {
 	rows, err := db.Query("select id, roleid ,name from b_user")
 	if err != nil {

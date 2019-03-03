@@ -17,6 +17,10 @@ var (
 )
 
 func main() {
+	utils := Utils{}
+	utils.LoadConfig()
+	log.Info(conf)
+
 	log.SetLevel(log.DebugLevel)
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -24,13 +28,11 @@ func main() {
 
 	//CORS
 	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"*"},
+		AllowOrigins: conf.APP.CORS_Origins,
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
-	utils := Utils{}
-	utils.LoadConfig()
-	log.Info(conf)
-	auth := auth{}
+
+	auth := Auth{}
 	user := User{}
 	var IsLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(conf.Secret),
@@ -41,7 +43,7 @@ func main() {
 	defer db.Close()
 
 	e.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "Hello! Welecom to CMS!")
+		return c.JSON(http.StatusOK, "Hello! Welcome to CMS!")
 	})
 
 	h := &handler{}
@@ -50,6 +52,6 @@ func main() {
 	apiGroup.GET("/users", user.getAllUsers, IsLoggedIn)
 	e.POST("/private", h.Private, IsLoggedIn)
 	e.GET("/admin", h.Private, IsLoggedIn, isAdmin)
-	e.Logger.Fatal(e.Start(":1234"))
+	e.Logger.Fatal(e.Start(conf.APP.Addr))
 
 }

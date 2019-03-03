@@ -6,11 +6,12 @@ import (
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
+	log "github.com/sirupsen/logrus"
 )
 
-type auth struct{}
+type Auth struct{}
 
-func (auth) skipper(c echo.Context) bool {
+func (auth Auth) skipper(c echo.Context) bool {
 	method := c.Request().Method
 	path := c.Path()
 
@@ -27,14 +28,27 @@ func (auth) skipper(c echo.Context) bool {
 	return false
 }
 
-func (auth) Login(c echo.Context) error {
+func (auth Auth) checkUserAuth(userName string, password string) bool {
+	user := User{}
+	// var userInfo User
+	userInfo, err := user.getUserByName(userName)
+	log.Info("Auth:", userInfo)
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+// 登录
+
+func (auth Auth) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 	// 从数据库中操作
-	if username == "jon" && password == "password" {
+	if auth.checkUserAuth(username, password) {
 		token := jwt.New(jwt.SigningMethodHS256)
 		claims := token.Claims.(jwt.MapClaims)
-		claims["name"] = "jon"
+		claims["name"] = username
 		claims["admin"] = false
 		claims["exp"] = time.Now().Add(time.Hour * 72).Unix()
 
