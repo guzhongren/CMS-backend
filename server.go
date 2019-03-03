@@ -49,7 +49,7 @@ func main() {
 	h := &handler{}
 	apiGroup := e.Group("/api/" + conf.Version)
 	apiGroup.POST("/login", auth.Login)
-	apiGroup.GET("/users", user.getAllUsers, IsLoggedIn)
+	apiGroup.GET("/user", user.getAllUsers, IsLoggedIn)
 	e.POST("/private", h.Private, IsLoggedIn)
 	e.GET("/admin", h.Private, IsLoggedIn, isAdmin)
 	e.Logger.Fatal(e.Start(conf.APP.Addr))

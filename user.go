@@ -8,18 +8,18 @@ import (
 )
 
 type User struct {
-	Id     int    `json:"id"`
+	ID     int    `json:"id"`
 	Name   string `json:"name"`
 	RoleId string `json:"roleid"`
 }
 
-func (user User) getUserByName(userName string) (*User, error) {
-	err := db.QueryRow("select id, name, roleid from b_user where name=$1", userName).Scan(&user.Id, &user.Name, &user.RoleId)
+func (user User) getUserByName(userName string) (User, error) {
+	err := db.QueryRow("select id, name, roleid from b_user where name=$1", userName).Scan(&user.ID, &user.Name, &user.RoleId)
 	if err != nil {
 		log.Warn("查询用户出错", err)
-		return &User{}, err
+		return User{}, err
 	}
-	return &user, nil
+	return user, nil
 }
 
 func (user User) getAllUsers(c echo.Context) error {
@@ -31,7 +31,7 @@ func (user User) getAllUsers(c echo.Context) error {
 	var userList = []User{}
 	for rows.Next() {
 		user := User{}
-		err := rows.Scan(&user.Id, &user.RoleId, &user.Name)
+		err := rows.Scan(&user.ID, &user.RoleId, &user.Name)
 		if err != nil {
 			log.Warn("处理查询结果出错", err)
 			return c.JSON(http.StatusExpectationFailed, &Response{
@@ -42,7 +42,6 @@ func (user User) getAllUsers(c echo.Context) error {
 		}
 		userList = append(userList, user)
 	}
-	log.Info("用户数据：", userList)
 	return c.JSON(http.StatusOK, &Response{
 		Success: true,
 		Result:  userList,

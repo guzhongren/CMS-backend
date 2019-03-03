@@ -36,6 +36,9 @@ func (auth Auth) checkUserAuth(userName string, password string) bool {
 	if err != nil {
 		return false
 	}
+	// if {
+	// 	return false
+	// }
 	return true
 }
 
@@ -54,7 +57,12 @@ func (auth Auth) Login(c echo.Context) error {
 
 		t, err := token.SignedString([]byte(conf.Secret))
 		if err != nil {
-			return err
+			log.Warn("认证不通过，请检查")
+			return c.JSON(http.StatusForbidden, &Response{
+				Success: false,
+				Result:  "",
+				Message: "请获取 token 并在 HEADER 中设置 token!",
+			})
 		}
 		type Token struct {
 			Token string `json:"token"`
