@@ -31,7 +31,7 @@ func (auth Auth) skipper(c echo.Context) bool {
 func (auth Auth) checkUserAuth(userName string, password string) bool {
 	user := User{}
 	// var userInfo User
-	userInfo, err := user.getUserByName(userName)
+	userInfo, err := user.GetUserByName(userName)
 	log.Info("Auth:", userInfo)
 	if err != nil {
 		return false

@@ -69,3 +69,30 @@ Authorization: "Bearer TOKEN" # TOKEN是登录的返回值
     "message": ""
 }
 ```
+
+**POST**
+
+**Parameters**
+
+```json
+{
+    name: 'admin',
+    roleid: 1,
+    id: 5
+}
+```
+
+**Result**
+
+```json
+{
+    "success": true,
+    "result":
+        {
+        name: 'admin',
+        roleid: 1,
+        id: 5
+        },
+    "message": ""
+}
+```

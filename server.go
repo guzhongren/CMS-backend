@@ -49,7 +49,12 @@ func main() {
 	h := &handler{}
 	apiGroup := e.Group("/api/" + conf.Version)
 	apiGroup.POST("/login", auth.Login)
-	apiGroup.GET("/user", user.getAllUsers, IsLoggedIn)
+	// 查询所有用户
+	apiGroup.GET("/users", user.GetAllUsers, IsLoggedIn)
+	apiGroup.GET("/users/:id", user.GetUser, IsLoggedIn)
+	apiGroup.POST("/users", user.AddUser, IsLoggedIn)
+	apiGroup.DELETE("/users/:id", user.DeleteUser, IsLoggedIn)
+	apiGroup.PUT("/users/:id", user.UpdateUser, IsLoggedIn)
 	e.POST("/private", h.Private, IsLoggedIn)
 	e.GET("/admin", h.Private, IsLoggedIn, isAdmin)
 	e.Logger.Fatal(e.Start(conf.APP.Addr))
