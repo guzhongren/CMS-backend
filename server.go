@@ -19,7 +19,7 @@ var (
 func main() {
 	utils := Utils{}
 	utils.LoadConfig()
-	log.Info(conf)
+	// log.Info(conf)
 
 	log.SetLevel(log.DebugLevel)
 	e := echo.New()

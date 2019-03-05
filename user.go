@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -31,7 +32,7 @@ func (user User) UpdateUser(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, &Response{
 			Success: false,
 			Result:  "",
-			Message: "通过id删除用户错误",
+			Message: "通过id更新用户错误",
 		})
 	}
 	return c.JSON(http.StatusOK, &Response{
@@ -53,7 +54,7 @@ func (user User) DeleteUser(c echo.Context) error {
 	}
 	deletedId, e := user.delete(id)
 	if e != nil {
-		log.Warn("获取用户错误", err)
+		log.Warn("没有该用户错误", err)
 		return c.JSON(http.StatusInternalServerError, &Response{
 			Success: false,
 			Result:  "",
@@ -145,17 +146,21 @@ func (u User) delete(id int) (int, error) {
 		return 0, err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(id)
+	result, err := stmt.Exec(id)
 	if err != nil {
 		log.Warn("执行删除用户错误", err)
 		return id, err
+	}
+	log.Info("删除用户后", result)
+	if count, _ := result.RowsAffected(); count <= 0 {
+		return 0, errors.New("没有该行数据")
 	}
 	return id, nil
 }
 
 // 更新用户
 func (u User) update(user User) (User, error) {
-	stmt, err := db.Prepare("UPDATE b_user set nam=$2,roleid=$3 WHERE id=$1")
+	stmt, err := db.Prepare("UPDATE b_user set name=$2,roleid=$3 WHERE id=$1")
 	if err != nil {
 		log.Warn("更新用户：操作数据库错误", err)
 		return user, err
