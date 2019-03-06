@@ -16,6 +16,7 @@ type CMS struct {
 	DB
 	Version string `yaml:"version"`
 	Secret  string `yaml:"secret"`
+	Salt    string `yaml:"salt"`
 }
 type Conf struct {
 	CMS

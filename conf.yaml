@@ -12,3 +12,4 @@ cms:
     db: cms
   version: v1
   secret: secret
+  salt: guzhongren

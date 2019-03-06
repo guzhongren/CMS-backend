@@ -36,14 +36,15 @@ func (auth Auth) checkUserAuth(userName string, password string) bool {
 	if err != nil {
 		return false
 	}
-	// if {
-	// 	return false
-	// }
-	return true
+	utils := Utils{}
+	ecodingStr := utils.CryptoStr(password)
+	if ecodingStr != userInfo.Password {
+		return true
+	}
+	return false
 }
 
 // 登录
-
 func (auth Auth) Login(c echo.Context) error {
 	username := c.FormValue("username")
 	password := c.FormValue("password")
