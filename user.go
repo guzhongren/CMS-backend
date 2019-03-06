@@ -26,6 +26,22 @@ func (user User) UpdateUser(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
+	innerUser, err := user.getOne(u.ID)
+	if err != nil {
+		insertUser, err := user.insert(innerUser)
+		if err != nil {
+			return c.JSON(http.StatusOK, &Response{
+				Success: true,
+				Result:  insertUser,
+				Message: "",
+			})
+		}
+		return c.JSON(http.StatusOK, &Response{
+			Success: false,
+			Result:  "",
+			Message: "没有该用户，更新失败",
+		})
+	}
 	user, e := user.update(*u)
 	if e != nil {
 		log.Warn("更新用户信息错误", e)
@@ -52,7 +68,15 @@ func (user User) DeleteUser(c echo.Context) error {
 			Message: "id获取错误",
 		})
 	}
-	deletedId, e := user.delete(id)
+	innerUser, err := user.getOne(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &Response{
+			Success: false,
+			Result:  "",
+			Message: "删除失败，没有该用户!",
+		})
+	}
+	deletedId, e := user.delete(innerUser.ID)
 	if e != nil {
 		log.Warn("没有该用户错误", err)
 		return c.JSON(http.StatusInternalServerError, &Response{
