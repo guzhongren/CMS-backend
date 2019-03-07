@@ -11,8 +11,14 @@ import (
 type User struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	RoleId   int    `json:"roleid"`
+	RoleId   string `json:"roleid"`
 	Password string `json:"password"`
+}
+
+type UserResponse struct {
+	ID   string `json:"id"`
+	Name string `json:"name"`
+	Role string `json:"role"`
 }
 
 // 更新用户
@@ -117,7 +123,7 @@ func (user User) AddUser(c echo.Context) error {
 	}
 	var utils = Utils{}
 	u.Password = utils.CryptoStr(u.Password)
-	u.ID = utils.GenerateUUID()
+	u.ID = utils.GetGUID()
 	user, err := user.insert(*u)
 	if err != nil {
 		log.Warn("插入数据库错误")

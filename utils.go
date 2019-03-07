@@ -29,7 +29,7 @@ func (utils Utils) CryptoStr(str string) string {
 }
 
 // 获取uuid
-func (utils Utils) GenerateUUID() string {
-	return uuid.NewV4().String()
+func (utils Utils) GetGUID() string {
+	return utils.CryptoStr(uuid.NewV4().String())
 
 }
