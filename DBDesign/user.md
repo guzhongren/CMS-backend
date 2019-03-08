@@ -6,3 +6,4 @@
 |name|character varying[32]|用户名|
 |roleid|integer|角色|
 |password|integer[32]|密码|
+|time|bigint|加入时间|

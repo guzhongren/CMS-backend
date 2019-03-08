@@ -11,3 +11,4 @@
 |provider|character varying[32]|提供者(商)|
 |providerlink|character varying[100]|提供者(商)链接|
 |images|character varying[36*5]|物料图片|
+|time|bigint|物料更新时间|

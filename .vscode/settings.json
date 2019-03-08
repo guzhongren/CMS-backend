@@ -1,0 +1,14 @@
+{
+    "sqltools.connections": [
+        {
+            "askForPassword": true,
+            "connectionTimeout": 15,
+            "database": "cms",
+            "dialect": "PostgreSQL",
+            "name": "aliyun",
+            "port": 5432,
+            "server": "47.95.247.139",
+            "username": "postgres"
+        }
+    ]
+}
