@@ -11,10 +11,11 @@ import (
 type User struct {
 	ID       string `json:"id"`
 	Name     string `json:"name"`
-	RoleId   string `json:"roleid"`
+	RoleId   string `json:"roleId"`
 	Password string `json:"password"`
 }
 
+// 返回信息
 type UserResponse struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
@@ -142,7 +143,7 @@ func (user User) AddUser(c echo.Context) error {
 
 // 插入用户
 func (u User) insert(user User) (User, error) {
-	stmt, err := db.Prepare("insert into b_user(id,name,roleid,password) values($1,$2,$3,$4)")
+	stmt, err := db.Prepare("insert into b_user(id,name,roleId,password) values($1,$2,$3,$4)")
 	if err != nil {
 		log.Warn("插入用户数据前错误", err)
 		return User{}, err
@@ -179,7 +180,7 @@ func (u User) delete(id string) (string, error) {
 
 // 更新用户
 func (u User) update(user User) (User, error) {
-	stmt, err := db.Prepare("UPDATE b_user set name=$2,roleid=$3,password=$4 WHERE id=$1")
+	stmt, err := db.Prepare("UPDATE b_user set name=$2,roleId=$3,password=$4 WHERE id=$1")
 	if err != nil {
 		log.Warn("更新用户：操作数据库错误", err)
 		return user, err
@@ -195,7 +196,7 @@ func (u User) update(user User) (User, error) {
 
 // 通过用户名查询用户
 func (user User) getOne(id string) (User, error) {
-	err := db.QueryRow("select id, name, roleid from b_user where id=$1", id).Scan(&user.ID, &user.Name, &user.RoleId)
+	err := db.QueryRow("select id, name, roleId from b_user where id=$1", id).Scan(&user.ID, &user.Name, &user.RoleId)
 	if err != nil {
 		log.Warn("查询用户出错", err)
 		return User{}, err
@@ -205,7 +206,7 @@ func (user User) getOne(id string) (User, error) {
 
 // 通过用户名查询用户
 func (user User) GetUserByName(userName string) (User, error) {
-	err := db.QueryRow("select id, name, roleid from b_user where name=$1", userName).Scan(&user.ID, &user.Name, &user.RoleId)
+	err := db.QueryRow("select id, name, roleId from b_user where name=$1", userName).Scan(&user.ID, &user.Name, &user.RoleId)
 	if err != nil {
 		log.Warn("查询用户出错", err)
 		return User{}, err
@@ -213,7 +214,7 @@ func (user User) GetUserByName(userName string) (User, error) {
 	return user, nil
 }
 func (user User) GetAll() ([]User, error) {
-	rows, err := db.Query("select id, roleid ,name from b_user")
+	rows, err := db.Query("select id, roleId ,name from b_user")
 	if err != nil {
 		log.Warn("查询出错", err)
 		return []User{}, err

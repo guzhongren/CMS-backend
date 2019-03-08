@@ -2,8 +2,9 @@
 
 |字段|类型|说明|
 |:--|:--|:--|
-|ID|character varying [32]|唯一标识, 主键, GUID生成|
+|id|character varying [32]|唯一标识, 主键, GUID生成|
 |name|character varying[32]|用户名|
-|roleid|integer|角色|
+|roleId|integer|角色|
 |password|integer[32]|密码|
-|time|bigint|加入时间|
+|joinTime|bigint|加入时间|
+|loginTime|bigint|加入时间|

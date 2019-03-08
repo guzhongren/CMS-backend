@@ -32,10 +32,10 @@ func (auth Auth) checkUserAuth(userName string, password string) bool {
 	user := User{}
 	// var userInfo User
 	userInfo, err := user.GetUserByName(userName)
-	log.Info("Auth:", userInfo)
 	if err != nil {
 		return false
 	}
+	log.Info("Auth:", userInfo)
 	utils := Utils{}
 	ecodingStr := utils.CryptoStr(password)
 	if ecodingStr != userInfo.Password {
