@@ -3,28 +3,34 @@ package main
 import (
 	"errors"
 	"net/http"
+	"time"
 
 	"github.com/labstack/echo"
 	log "github.com/sirupsen/logrus"
 )
 
 type User struct {
-	ID       string `json:"id"`
-	Name     string `json:"name"`
-	RoleId   string `json:"roleId"`
-	Password string `json:"password"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	RoleId     string `json:"roleId"`
+	Password   string `json:"password"`
+	CreateTime int64  `json:"createTime"`
+	LoginTime  int64  `json:"loginTime"`
 }
 
 // 返回信息
 type UserResponse struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-	Role string `json:"role"`
+	ID         string `json:"id"`
+	Name       string `json:"name"`
+	Role       string `json:"role"`
+	CreateTime int64  `json:"createTime"`
+	LoginTime  int64  `json:"loginTime"`
 }
 
 // 更新用户
 func (user User) UpdateUser(c echo.Context) error {
 	u := new(User)
+	u.ID = c.Param("id")
 	if err := c.Bind(u); err != nil {
 		log.Warn(err)
 		return c.JSON(http.StatusBadRequest, &Response{
@@ -33,23 +39,12 @@ func (user User) UpdateUser(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
-	innerUser, err := user.getOne(u.ID)
+	log.Warn("没有该用户？", u)
+	_, err := user.getOne(u.ID)
 	if err != nil {
-		insertUser, err := user.insert(innerUser)
-		if err != nil {
-			return c.JSON(http.StatusOK, &Response{
-				Success: true,
-				Result:  insertUser,
-				Message: "",
-			})
-		}
-		return c.JSON(http.StatusOK, &Response{
-			Success: false,
-			Result:  "",
-			Message: "没有该用户，更新失败",
-		})
+		return user.AddUser(c)
 	}
-	user, e := user.update(*u)
+	_, e := user.update(*u)
 	if e != nil {
 		log.Warn("更新用户信息错误", e)
 		return c.JSON(http.StatusInternalServerError, &Response{
@@ -58,9 +53,35 @@ func (user User) UpdateUser(c echo.Context) error {
 			Message: "通过id更新用户错误",
 		})
 	}
+	updatedUser, err := user.getOne(u.ID)
 	return c.JSON(http.StatusOK, &Response{
 		Success: true,
-		Result:  user,
+		Result:  updatedUser,
+		Message: "",
+	})
+}
+
+func (user User) ResetPassword(c echo.Context) error {
+	id := c.Param("id")
+	u := new(User)
+	if err := c.Bind(u); err != nil {
+		return c.JSON(http.StatusBadRequest, &Response{
+			Success: false,
+			Result:  "",
+			Message: "参数错误",
+		})
+	}
+	err := user.updatePassword(id, u.Password)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, &Response{
+			Success: false,
+			Result:  "",
+			Message: "重置密码错误，请联系管理员！",
+		})
+	}
+	return c.JSON(http.StatusOK, &Response{
+		Success: true,
+		Result:  true,
 		Message: "",
 	})
 }
@@ -95,7 +116,8 @@ func (user User) DeleteUser(c echo.Context) error {
 // 获取用户
 func (user User) GetUser(c echo.Context) error {
 	id := c.Param("id")
-	user, err := user.getOne(id)
+	u, err := user.getOne(id)
+	log.Info("test", u)
 	if err != nil {
 		log.Warn("获取用户错误", err)
 		return c.JSON(http.StatusInternalServerError, &Response{
@@ -106,7 +128,7 @@ func (user User) GetUser(c echo.Context) error {
 	}
 	return c.JSON(http.StatusOK, &Response{
 		Success: true,
-		Result:  user,
+		Result:  u,
 		Message: "",
 	})
 }
@@ -114,8 +136,9 @@ func (user User) GetUser(c echo.Context) error {
 // 新增用户
 func (user User) AddUser(c echo.Context) error {
 	u := new(User)
+	log.Info(u)
 	if err := c.Bind(u); err != nil {
-		log.Warn(err)
+		log.Warn("绑定数据错误", err)
 		return c.JSON(http.StatusBadRequest, &Response{
 			Success: false,
 			Result:  "",
@@ -125,7 +148,8 @@ func (user User) AddUser(c echo.Context) error {
 	var utils = Utils{}
 	u.Password = utils.CryptoStr(u.Password)
 	u.ID = utils.GetGUID()
-	user, err := user.insert(*u)
+	u.CreateTime = time.Now().Unix()
+	insertedUser, err := user.insert(*u)
 	if err != nil {
 		log.Warn("插入数据库错误")
 		return c.JSON(http.StatusInternalServerError, &Response{
@@ -134,23 +158,33 @@ func (user User) AddUser(c echo.Context) error {
 			Message: "插入数据库错误",
 		})
 	}
+	resUser, err := user.getOne(insertedUser.ID)
+	if err != nil {
+		log.Warn("插入又获取数据错误", err)
+		return c.JSON(http.StatusInternalServerError, &Response{
+			Success: false,
+			Result:  "",
+			Message: "插入数据库错误",
+		})
+	}
+	log.Info(resUser)
 	return c.JSON(http.StatusOK, &Response{
 		Success: true,
-		Result:  user,
+		Result:  resUser,
 		Message: "",
 	})
 }
 
 // 插入用户
 func (u User) insert(user User) (User, error) {
-	stmt, err := db.Prepare("insert into b_user(id,name,roleId,password) values($1,$2,$3,$4)")
+	stmt, err := db.Prepare(`insert into b_user(id,name,"roleId",password,"createTime") values($1,$2,$3,$4,$5)`)
 	if err != nil {
 		log.Warn("插入用户数据前错误", err)
 		return User{}, err
 	}
 	defer stmt.Close()
-	log.Info(user.ID)
-	_, err = stmt.Exec(user.ID, user.Name, user.RoleId, user.Password)
+	user.CreateTime = time.Now().Unix()
+	_, err = stmt.Exec(user.ID, user.Name, user.RoleId, user.Password, user.CreateTime)
 	if err != nil {
 		log.Warn("插入用户错误", err)
 		return User{}, err
@@ -180,13 +214,13 @@ func (u User) delete(id string) (string, error) {
 
 // 更新用户
 func (u User) update(user User) (User, error) {
-	stmt, err := db.Prepare("UPDATE b_user set name=$2,roleId=$3,password=$4 WHERE id=$1")
+	stmt, err := db.Prepare(`UPDATE b_user set name=$2,"roleId"=$3 WHERE id=$1`)
 	if err != nil {
 		log.Warn("更新用户：操作数据库错误", err)
 		return user, err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(user.ID, user.Name, user.RoleId, user.Password)
+	_, err = stmt.Exec(user.ID, user.Name, user.RoleId)
 	if err != nil {
 		log.Warn("执行更新用户错误", err)
 		return user, err
@@ -194,38 +228,61 @@ func (u User) update(user User) (User, error) {
 	return user, nil
 }
 
-// 通过用户名查询用户
-func (user User) getOne(id string) (User, error) {
-	err := db.QueryRow("select id, name, roleId from b_user where id=$1", id).Scan(&user.ID, &user.Name, &user.RoleId)
+// 重置密码
+func (u User) updatePassword(id, newPW string) error {
+	stmt, err := db.Prepare(`UPDATE b_user set password=$2 WHERE id=$1`)
 	if err != nil {
-		log.Warn("查询用户出错", err)
-		return User{}, err
+		log.Warn("重置密码：操作数据库错误", err)
+		return err
 	}
-	return user, nil
+	defer stmt.Close()
+	utils := Utils{}
+	password := utils.CryptoStr(newPW)
+	_, err = stmt.Exec(id, password)
+	if err != nil {
+		log.Warn("执行重置密码错误", err)
+		return err
+	}
+	return nil
 }
 
 // 通过用户名查询用户
-func (user User) GetUserByName(userName string) (User, error) {
-	err := db.QueryRow("select id, name, roleId from b_user where name=$1", userName).Scan(&user.ID, &user.Name, &user.RoleId)
+func (user User) getOne(id string) (UserResponse, error) {
+	u := UserResponse{}
+	err := db.QueryRow(`select b.id, b.name, b."createTime", br.name from b_user b left join b_role br on b."roleId"= br.id where b.id=$1`, id).Scan(&u.ID, &u.Name, &u.CreateTime, &u.Role)
 	if err != nil {
 		log.Warn("查询用户出错", err)
-		return User{}, err
+		return UserResponse{}, err
 	}
-	return user, nil
+	return u, nil
 }
-func (user User) GetAll() ([]User, error) {
-	rows, err := db.Query("select id, roleId ,name from b_user")
+
+// 通过用户名查询用户
+func (user User) GetUserByName(userName string) (UserResponse, error) {
+	var sql = `select b.id, b.name, br.name from b_user b left join b_role br on b."roleId" = br.id where b.name='$1'`
+	u := UserResponse{}
+	err := db.QueryRow(sql, userName).Scan(&u.ID, &u.Name, &u.Role)
+	if err != nil {
+		log.Warn("根据用户名查询用户出错", sql, err)
+		return UserResponse{}, err
+	}
+	return u, nil
+}
+
+// 获取所有用户sql处理
+func (user User) GetAll() ([]UserResponse, error) {
+	rows, err := db.Query(`select b.id, b.name, br.name from b_user b left join b_role br on b."roleId" = br.id`)
 	if err != nil {
 		log.Warn("查询出错", err)
-		return []User{}, err
+		return []UserResponse{}, err
 	}
-	var userList = []User{}
+	var userList = []UserResponse{}
 	for rows.Next() {
-		user := User{}
-		err := rows.Scan(&user.ID, &user.RoleId, &user.Name)
+		user := UserResponse{}
+		err := rows.Scan(&user.ID, &user.Name, &user.Role)
 		if err != nil {
 			log.Warn("处理查询结果出错", err)
-			return []User{}, err
+			return []UserResponse{}, err
 		}
 		userList = append(userList, user)
 	}

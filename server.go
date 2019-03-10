@@ -55,6 +55,7 @@ func main() {
 	apiGroup.POST("/users", user.AddUser, IsLoggedIn)
 	apiGroup.DELETE("/users/:id", user.DeleteUser, IsLoggedIn)
 	apiGroup.PUT("/users/:id", user.UpdateUser, IsLoggedIn)
+	apiGroup.PUT("/users/:id/resetPassword", user.ResetPassword, IsLoggedIn)
 	e.POST("/private", h.Private, IsLoggedIn)
 	e.GET("/admin", h.Private, IsLoggedIn, isAdmin)
 	e.Logger.Fatal(e.Start(conf.APP.Addr))

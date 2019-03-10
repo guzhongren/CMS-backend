@@ -30,17 +30,11 @@ func (auth Auth) skipper(c echo.Context) bool {
 
 func (auth Auth) checkUserAuth(userName string, password string) bool {
 	user := User{}
-	// var userInfo User
 	userInfo, err := user.GetUserByName(userName)
 	if err != nil {
 		return false
 	}
 	log.Info("Auth:", userInfo)
-	utils := Utils{}
-	ecodingStr := utils.CryptoStr(password)
-	if ecodingStr != userInfo.Password {
-		return true
-	}
 	return false
 }
 
