@@ -35,7 +35,7 @@ func (auth Auth) checkUserAuth(userName string, password string) bool {
 		return false
 	}
 	log.Info("Auth:", userInfo)
-	return false
+	return true
 }
 
 // 登录

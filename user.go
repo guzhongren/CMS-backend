@@ -259,7 +259,7 @@ func (user User) getOne(id string) (UserResponse, error) {
 
 // 通过用户名查询用户
 func (user User) GetUserByName(userName string) (UserResponse, error) {
-	var sql = `select b.id, b.name, br.name from b_user b left join b_role br on b."roleId" = br.id where b.name='$1'`
+	var sql = `select b.id, b.name, br.name from b_user b left join b_role br on b."roleId"=br.id where b.name=$1`
 	u := UserResponse{}
 	err := db.QueryRow(sql, userName).Scan(&u.ID, &u.Name, &u.Role)
 	if err != nil {
