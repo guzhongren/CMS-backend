@@ -47,7 +47,7 @@ Authorization: "Bearer TOKEN" # TOKEN是登录的返回值
 
 **GET**
 
-
+**/users**
 
 **Result**
 
@@ -69,8 +69,33 @@ Authorization: "Bearer TOKEN" # TOKEN是登录的返回值
     "message": ""
 }
 ```
+**GET**
+
+**/users/:id**
+
+获取用户信息
+
+**Result**
+
+```json
+{
+    "success": true,
+    "result":
+        {
+        "id": 1,
+        "name": "张三",
+        "roleid": "1"
+        }
+    ],
+    "message": ""
+}
+```
 
 **POST**
+
+**/users/:id**
+
+新增用户
 
 **Parameters**
 
@@ -93,6 +118,53 @@ Authorization: "Bearer TOKEN" # TOKEN是登录的返回值
         roleid: 1,
         id: 5
         },
+    "message": ""
+}
+```
+
+**PUT**
+
+**/users/:id**
+
+更新用户
+
+**Parameters**
+
+```json
+{
+    name: 'admin',
+    roleid: 1,
+    id: 5
+}
+```
+
+**Result**
+
+```json
+{
+    "success": true,
+    "result":
+        {
+        name: 'admin',
+        roleid: 1,
+        id: 5
+        },
+    "message": ""
+}
+```
+
+**DELETE**
+
+**/users/:id**
+
+删除用户
+
+**Result**
+
+```json
+{
+    "success": true,
+    "result": 5,
     "message": ""
 }
 ```

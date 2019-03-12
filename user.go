@@ -136,7 +136,6 @@ func (user User) GetUser(c echo.Context) error {
 // 新增用户
 func (user User) AddUser(c echo.Context) error {
 	u := new(User)
-	log.Info(u)
 	if err := c.Bind(u); err != nil {
 		log.Warn("绑定数据错误", err)
 		return c.JSON(http.StatusBadRequest, &Response{
