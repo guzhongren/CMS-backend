@@ -5,6 +5,8 @@ import (
 	"encoding/hex"
 	"io/ioutil"
 
+	"github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo"
 	uuid "github.com/satori/go.uuid"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/yaml.v2"
@@ -32,4 +34,16 @@ func (utils Utils) CryptoStr(str string) string {
 func (utils Utils) GetGUID() string {
 	return utils.CryptoStr(uuid.NewV4().String())
 
+}
+
+func (utils Utils) GetUserFromContext(c echo.Context) (UserResponse, error) {
+	userInfo := c.Get("user").(*jwt.Token)
+	claims := userInfo.Claims.(jwt.MapClaims)
+	name := claims["name"].(string)
+	user := User{}
+	responseUser, err := user.GetUserByName(name)
+	if err != nil {
+		return UserResponse{}, err
+	}
+	return responseUser, nil
 }
