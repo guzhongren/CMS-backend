@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"os"
 
 	"database/sql"
 
@@ -20,7 +21,8 @@ func main() {
 	utils := Utils{}
 	utils.LoadConfig()
 	// log.Info(conf)
-
+	// log.SetFormatter(&log.JSONFormatter{})
+	log.SetOutput(os.Stdout)
 	log.SetLevel(log.DebugLevel)
 	e := echo.New()
 	e.Use(middleware.Logger())
@@ -57,8 +59,15 @@ func main() {
 	apiGroup.DELETE("/users/:id", user.DeleteUser, IsLoggedIn)
 	apiGroup.PUT("/users/:id", user.UpdateUser, IsLoggedIn)
 	apiGroup.PUT("/users/:id/resetPassword", user.ResetPassword, IsLoggedIn)
-	apiGroup.GET("/materials", material.GetAll, IsLoggedIn)
+	apiGroup.GET("/materials/types", material.GetMaterialType, IsLoggedIn)
+	apiGroup.GET("/materials/types/:id", material.GetMaterialTypeById, IsLoggedIn)
 	apiGroup.POST("/materials", material.Add, IsLoggedIn)
+	apiGroup.DELETE("/materials/:id", material.Delete, IsLoggedIn)
+	// TODO: 更新物料
+	// apiGroup.PUT("/materials", material.Update, IsLoggedIn)
+	apiGroup.GET("/materials", material.GetAll, IsLoggedIn)
+	apiGroup.GET("/materials/:id", material.GetOne, IsLoggedIn)
+
 	e.POST("/private", h.Private, IsLoggedIn)
 	e.GET("/admin", h.Private, IsLoggedIn, isAdmin)
 	e.Logger.Fatal(e.Start(conf.APP.Addr))
