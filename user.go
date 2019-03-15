@@ -211,6 +211,7 @@ func (u User) delete(id string) (string, error) {
 	return id, nil
 }
 
+// TODO: 更新用户前获取当前用户
 // 更新用户
 func (u User) update(user User) (User, error) {
 	stmt, err := db.Prepare(`UPDATE b_user set name=$2,"roleId"=$3 WHERE id=$1`)

@@ -11,8 +11,12 @@ import (
 )
 
 type Material struct {
-	ID           string  `json:"id"`
-	UserId       string  `json:"userId"`
+	ID string `json:"id"`
+	// 物料所有者
+	OwnerId string `json:"ownerId"`
+	// 物料上传者
+	// TODO: 添加至数据库
+	UploadUserId string  `json:"uploadUserId"`
 	Name         string  `json:"name"`
 	Location     string  `json:"location"`
 	Type         int     `json:"type"`
@@ -92,7 +96,7 @@ func (material Material) Add(c echo.Context) error {
 	log.Info(*m)
 	m.ID = utils.GetGUID()
 	m.CreateTime = time.Now().Unix()
-	m.UserId = userId
+	m.OwnerId = userId
 	insertedMaterial, err := m.insert(*m)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, &Response{
@@ -239,7 +243,7 @@ func (material Material) insert(m Material) (Material, error) {
 		return Material{}, err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(material.ID, material.UserId, material.Location, material.Type, material.Count, material.Provider, material.ProviderLink, material.Images, material.Name, material.CreateTime, material.UpdateTime, material.Price)
+	_, err = stmt.Exec(material.ID, material.OwnerId, material.Location, material.Type, material.Count, material.Provider, material.ProviderLink, material.Images, material.Name, material.CreateTime, material.UpdateTime, material.Price)
 	if err != nil {
 		log.Warn("插入物料时错误！", err)
 		return Material{}, err
@@ -269,14 +273,16 @@ func (material Material) delete(id string) bool {
 }
 
 // 更新物料信息
+// TODO: 处理文件存储
 func (material Material) update(m Material) (Material, error) {
-	stmt, err := db.Prepare(`UPDATE b_user set name=$2,"roleId"=$3 WHERE id=$1`)
+	m.UpdateTime = time.Now().Unix()
+	stmt, err := db.Prepare(`UPDATE public.b_material SET "userId"=$2, location=$3, type=$4, count=$5, provider=$6, "providerLink"=$7, images=$8, name=$9, "updateTime"=$10, price=$11 WHERE id=$1`)
 	if err != nil {
 		log.Warn("更新用户：操作数据库错误", err)
 		return Material{}, err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(m.ID, m.Name)
+	_, err = stmt.Exec(m.ID, m.OwnerId, m.Location, m.Type, m.Count, m.Provider, m.ProviderLink, m.Images, m.Name, m.UpdateTime, m.Price)
 	if err != nil {
 		log.Warn("执行更新用户错误", err)
 		return Material{}, err
@@ -287,7 +293,7 @@ func (material Material) update(m Material) (Material, error) {
 // TODO:查询单个物料
 func (material Material) getOne(id string) (Material, error) {
 	m := Material{}
-	err := db.QueryRow(`select b.id, b.name, b."createTime", br.name from b_user b left join b_role br on b."roleId"= br.id where b.id=$1`, id).Scan(&m.ID, &m.Name, &m.CreateTime, &m.Type)
+	err := db.QueryRow(`select m.id, m.name, m.location, m.materialType, m.count, m.provider, m."providerLink", m.images, m."createTime", m."updateTime", cast(m.price as float), u.id as userId, u.name from (select m1.id,m1."userId", m1.name, m1.location, bmt.name as materialType, m1.count, m1.provider,m1."providerLink",m1.images, m1."createTime",m1."updateTime", m1.price from b_material m1 left join b_material_type bmt on m1.type = bmt.id) as m left join b_user u on m."userId"=u.id where m.id=$1`, id).Scan(&m.ID, &m.Name, &m.Location, &m.Type, &m.Count, &m.Provider, &m.ProviderLink, &m.Images, &m.CreateTime, &m.UpdateTime, &m.Price)
 	if err != nil {
 		log.Warn("查询用户出错", err)
 		return Material{}, err
