@@ -63,8 +63,7 @@ func main() {
 	apiGroup.GET("/materials/types/:id", material.GetMaterialTypeById, IsLoggedIn)
 	apiGroup.POST("/materials", material.Add, IsLoggedIn)
 	apiGroup.DELETE("/materials/:id", material.Delete, IsLoggedIn)
-	// TODO: 更新物料
-	// apiGroup.PUT("/materials", material.Update, IsLoggedIn)
+	apiGroup.PUT("/materials/:id", material.Update, IsLoggedIn)
 	apiGroup.GET("/materials", material.GetAll, IsLoggedIn)
 	apiGroup.GET("/materials/:id", material.GetOne, IsLoggedIn)
 

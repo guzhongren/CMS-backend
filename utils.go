@@ -36,6 +36,7 @@ func (utils Utils) GetGUID() string {
 
 }
 
+// 从context中获取当前用户
 func (utils Utils) GetUserFromContext(c echo.Context) (UserResponse, error) {
 	userInfo := c.Get("user").(*jwt.Token)
 	claims := userInfo.Claims.(jwt.MapClaims)
