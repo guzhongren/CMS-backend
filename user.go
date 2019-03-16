@@ -144,6 +144,15 @@ func (user User) AddUser(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
+	_, err := user.GetUserByName(u.Name)
+	if err == nil {
+		log.Warn("已存在该用户，请使用新的用户名")
+		return c.JSON(http.StatusBadRequest, &Response{
+			Success: false,
+			Result:  "",
+			Message: "已存在该用户，请使用新的用户名",
+		})
+	}
 	var utils = Utils{}
 	u.Password = utils.CryptoStr(u.Password)
 	u.ID = utils.GetGUID()
@@ -246,7 +255,7 @@ func (u User) updatePassword(id, newPW string) error {
 	return nil
 }
 
-// 通过用户名查询用户
+// 通过用户id查询用户
 func (user User) getOne(id string) (UserResponse, error) {
 	u := UserResponse{}
 	err := db.QueryRow(`select b.id, b.name, b."createTime", br.name from b_user b left join b_role br on b."roleId"= br.id where b.id=$1`, id).Scan(&u.ID, &u.Name, &u.CreateTime, &u.Role)
