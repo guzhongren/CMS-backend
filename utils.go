@@ -76,7 +76,8 @@ func (utils Utils) SaveFile(file *multipart.FileHeader) (string, error) {
 		return "", errors.New("文件名需带扩展名")
 	}
 	os.Chdir(conf.APP.StaticPath.Local)
-	dist, err := os.Create(fileId + "." + fileExt)
+	distFilename := fileId + "." + fileExt
+	dist, err := os.Create(distFilename)
 	if err != nil {
 		log.Warn("在服务器上创建文件错误", err)
 		return "", err
@@ -85,5 +86,5 @@ func (utils Utils) SaveFile(file *multipart.FileHeader) (string, error) {
 	if _, err = io.Copy(dist, src); err != nil {
 		return "", err
 	}
-	return fileId, nil
+	return distFilename, nil
 }

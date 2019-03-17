@@ -48,10 +48,11 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Hello! Welcome to CMS!")
 	})
-	e.Static(conf.APP.StaticPath.Http, conf.APP.StaticPath.Local)
 
 	h := &handler{}
 	apiGroup := e.Group("/api/" + conf.Version)
+	apiGroup.Static(conf.APP.StaticPath.Http, conf.APP.StaticPath.Local)
+
 	apiGroup.POST("/login", auth.Login)
 	// 查询所有用户
 	apiGroup.GET("/users", user.GetAllUsers, IsLoggedIn)
