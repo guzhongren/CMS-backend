@@ -99,3 +99,24 @@ func (utils Utils) DeleteFile(filename string) bool {
 	}
 	return true
 }
+
+// 上传文件
+func (utils Utils) UploadFiles(files []*multipart.FileHeader) ([]string, error) {
+	if len(files) > 5 {
+		log.Warn("最多上传5张图片！")
+		return []string{}, errors.New("最多上传5张图片！")
+	}
+	var savedFileIDArr = []string{}
+	for _, file := range files {
+		fileID, err := utils.SaveFile(file)
+		if err != nil {
+			os.Chdir(conf.APP.StaticPath.Local)
+			for _, uploadedFile := range savedFileIDArr {
+				_ = utils.DeleteFile(uploadedFile)
+			}
+			return []string{}, errors.New("服务器内部错误！")
+		}
+		savedFileIDArr = append(savedFileIDArr, fileID)
+	}
+	return savedFileIDArr, nil
+}

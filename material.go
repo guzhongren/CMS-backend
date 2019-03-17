@@ -96,7 +96,7 @@ func (material Material) Add(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
-
+	// 文件上传
 	form, err := c.MultipartForm()
 	if err != nil {
 		log.Warn("获取form 出错！", err)
@@ -108,29 +108,13 @@ func (material Material) Add(c echo.Context) error {
 		})
 	}
 	files := form.File["images"]
-	if len(files) > 5 {
-		log.Warn("最多上传5张图片！")
-		return c.JSON(http.StatusBadRequest, &Response{
+	savedFileIDArr, err := utils.UploadFiles(files)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, &Response{
 			Success: false,
 			Result:  "",
-			Message: "最多上传5张图片！",
+			Message: err.Error(),
 		})
-	}
-	var savedFileIDArr = []string{}
-	for _, file := range files {
-		fileID, err := utils.SaveFile(file)
-		if err != nil {
-			os.Chdir(conf.APP.StaticPath.Local)
-			for _, uploadedFile := range savedFileIDArr {
-				_ = utils.DeleteFile(uploadedFile)
-			}
-			return c.JSON(http.StatusInternalServerError, &Response{
-				Success: false,
-				Result:  "",
-				Message: "服务器内部错误",
-			})
-		}
-		savedFileIDArr = append(savedFileIDArr, fileID)
 	}
 	m.Images = strings.Join(savedFileIDArr, ",")
 	m.ID = utils.GetGUID()
@@ -147,7 +131,7 @@ func (material Material) Add(c echo.Context) error {
 	}
 	response := MaterialResponse{}
 	response.ID = insertedMaterial.ID
-	response.Name = insertedMaterial.Name
+	// response.Name = insertedMaterial.Name
 	response.Location = sql.NullString{
 		String: m.Location,
 		Valid:  m.Location == "",
@@ -242,6 +226,35 @@ func (material Material) Update(c echo.Context) error {
 			Message: "更新：获取物料数据错！",
 		})
 	}
+	// 文件上传
+	form, err := c.MultipartForm()
+	if err != nil {
+		log.Warn("获取form 出错！", err)
+		return c.JSON(http.StatusInternalServerError, &Response{
+			Success: false,
+			Result:  "",
+			Message: "服务器内部错误",
+		})
+	}
+	files := form.File["images"]
+	savedFileIDArr, err := utils.UploadFiles(files)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, &Response{
+			Success: false,
+			Result:  "",
+			Message: err.Error(),
+		})
+	}
+	// 先删除再存进数据库
+	if dbMaterial.Images.Valid {
+		willDeleteFiles := dbMaterial.Images.String
+		willDeleteFileArr := strings.Split(willDeleteFiles, ",")
+		os.Chdir(conf.APP.StaticPath.Local)
+		for _, filename := range willDeleteFileArr {
+			utils.DeleteFile(filename)
+		}
+	}
+	m.Images = strings.Join(savedFileIDArr, ",")
 	m.ID = id
 	m.OwnerID = dbMaterial.Owner.ID
 	m.UpdateUserID = user.ID
@@ -326,13 +339,13 @@ func (material Material) GetMaterialType(c echo.Context) error {
 
 // 插入
 func (material Material) insert(m Material) (Material, error) {
-	stmt, err := db.Prepare(`INSERT INTO "public"."b_material" ("id", "ownerId", "location", "type", "count", "provider", "providerLink", "images", "name", "createTime", "updateTime", "price") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING "id"`)
+	stmt, err := db.Prepare(`INSERT INTO "public"."b_material" ("id", "ownerId", "location", "type", "count", "provider", "providerLink", "images", "name", "createTime", "updateTime", "price", "updateUserId") VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13) RETURNING "id"`)
 	if err != nil {
 		log.Warn("插入物料前错误，", err)
 		return Material{}, err
 	}
 	defer stmt.Close()
-	_, err = stmt.Exec(material.ID, material.OwnerID, material.Location, material.Type, material.Count, material.Provider, material.ProviderLink, material.Images, material.Name, material.CreateTime, material.UpdateTime, material.Price)
+	_, err = stmt.Exec(material.ID, material.OwnerID, material.Location, material.Type, material.Count, material.Provider, material.ProviderLink, material.Images, material.Name, material.CreateTime, material.UpdateTime, material.Price, material.UpdateUserID)
 	if err != nil {
 		log.Warn("插入物料时错误！", err)
 		return Material{}, err
