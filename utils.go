@@ -3,7 +3,12 @@ package main
 import (
 	"crypto/md5"
 	"encoding/hex"
+	"errors"
+	"io"
 	"io/ioutil"
+	"mime/multipart"
+	"os"
+	"strings"
 
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
@@ -47,4 +52,38 @@ func (utils Utils) GetUserFromContext(c echo.Context) (UserResponse, error) {
 		return UserResponse{}, err
 	}
 	return responseUser, nil
+}
+
+// 保存图片，返回保存后的id
+func (utils Utils) SaveFile(file *multipart.FileHeader) (string, error) {
+	fileType := file.Header["Content-Type"][0]
+	if fileType != "image/jpeg" && fileType != "image/jpg" &&
+		fileType != "image/gif" && fileType != "image/png" &&
+		fileType != "application/pdf" {
+		log.Warn("不支持的文件类型")
+		return "", errors.New("不支持的文件类型")
+	}
+	src, err := file.Open()
+	if err != nil {
+		return "", err
+	}
+	fileId := utils.GetGUID()
+	defer src.Close()
+	filename := file.Filename
+	fileExt := strings.Split(filename, ".")[1]
+	if len(fileExt) == 0 {
+		log.Warn("文件名需带扩展名")
+		return "", errors.New("文件名需带扩展名")
+	}
+	os.Chdir(conf.APP.StaticPath.Local)
+	dist, err := os.Create(fileId + "." + fileExt)
+	if err != nil {
+		log.Warn("在服务器上创建文件错误", err)
+		return "", err
+	}
+	defer dist.Close()
+	if _, err = io.Copy(dist, src); err != nil {
+		return "", err
+	}
+	return fileId, nil
 }

@@ -1,8 +1,13 @@
 package main
 
+type StaticPath struct {
+	Http  string `yaml:"http"`
+	Local string `yaml:"local"`
+}
 type APP struct {
-	Addr         string   `yaml:"addr"`
-	CORS_Origins []string `yaml:"cors_origins"`
+	Addr         string     `yaml:"addr"`
+	CORS_Origins []string   `yaml:"cors_origins"`
+	StaticPath   StaticPath `yaml:"staticPath"`
 }
 type DB struct {
 	Host     string `yaml:"host"`

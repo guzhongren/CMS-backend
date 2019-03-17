@@ -48,6 +48,7 @@ func main() {
 	e.GET("/", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Hello! Welcome to CMS!")
 	})
+	e.Static(conf.APP.StaticPath.Http, conf.APP.StaticPath.Local)
 
 	h := &handler{}
 	apiGroup := e.Group("/api/" + conf.Version)

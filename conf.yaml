@@ -4,6 +4,9 @@ cms:
     cors_origins:
       - http://localhost:8080
       - http://127.0.0.1:8080
+    staticPath: 
+      http: /static
+      local: assets
   db:
     host: 47.95.247.139
     port: 5432

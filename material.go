@@ -94,6 +94,20 @@ func (material Material) Add(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
+	file, err := c.FormFile("images")
+	if err != nil {
+		log.Warn("图片获取错误", err)
+	}
+	log.Info(file)
+	fileId, err := utils.SaveFile(file)
+	if err != nil {
+		return c.JSON(http.StatusInternalServerError, &Response{
+			Success: false,
+			Result:  "",
+			Message: "服务器内部错误",
+		})
+	}
+	m.Images = fileId
 	m.ID = utils.GetGUID()
 	m.CreateTime = time.Now().Unix()
 	m.OwnerID = userId
