@@ -3,7 +3,9 @@ package main
 import (
 	"database/sql"
 	"net/http"
+	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/labstack/echo"
@@ -94,20 +96,43 @@ func (material Material) Add(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
-	file, err := c.FormFile("images")
+
+	form, err := c.MultipartForm()
 	if err != nil {
-		log.Warn("图片获取错误", err)
-	}
-	log.Info(file)
-	fileId, err := utils.SaveFile(file)
-	if err != nil {
+		log.Warn("获取form 出错！", err)
+
 		return c.JSON(http.StatusInternalServerError, &Response{
 			Success: false,
 			Result:  "",
 			Message: "服务器内部错误",
 		})
 	}
-	m.Images = fileId
+	files := form.File["images"]
+	if len(files) > 5 {
+		log.Warn("最多上传5张图片！")
+		return c.JSON(http.StatusBadRequest, &Response{
+			Success: false,
+			Result:  "",
+			Message: "最多上传5张图片！",
+		})
+	}
+	var savedFileIDArr = []string{}
+	for _, file := range files {
+		fileID, err := utils.SaveFile(file)
+		if err != nil {
+			os.Chdir(conf.APP.StaticPath.Local)
+			for _, uploadedFile := range savedFileIDArr {
+				_ = utils.DeleteFile(uploadedFile)
+			}
+			return c.JSON(http.StatusInternalServerError, &Response{
+				Success: false,
+				Result:  "",
+				Message: "服务器内部错误",
+			})
+		}
+		savedFileIDArr = append(savedFileIDArr, fileID)
+	}
+	m.Images = strings.Join(savedFileIDArr, ",")
 	m.ID = utils.GetGUID()
 	m.CreateTime = time.Now().Unix()
 	m.OwnerID = userId
@@ -332,7 +357,6 @@ func (material Material) delete(id string) bool {
 }
 
 // 更新物料信息
-// TODO: 处理文件存储
 func (material Material) update(m Material) (string, error) {
 	m.UpdateTime = time.Now().Unix()
 	stmt, err := db.Prepare(`UPDATE public.b_material SET "ownerId"=$2, location=$3, type=$4, count=$5, provider=$6, "providerLink"=$7, images=$8, name=$9, "updateTime"=$10, price=$11, "updateUserId"=$12 WHERE id=$1`)

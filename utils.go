@@ -67,7 +67,7 @@ func (utils Utils) SaveFile(file *multipart.FileHeader) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fileId := utils.GetGUID()
+	fileID := utils.GetGUID()
 	defer src.Close()
 	filename := file.Filename
 	fileExt := strings.Split(filename, ".")[1]
@@ -76,7 +76,7 @@ func (utils Utils) SaveFile(file *multipart.FileHeader) (string, error) {
 		return "", errors.New("文件名需带扩展名")
 	}
 	os.Chdir(conf.APP.StaticPath.Local)
-	distFilename := fileId + "." + fileExt
+	distFilename := fileID + "." + fileExt
 	dist, err := os.Create(distFilename)
 	if err != nil {
 		log.Warn("在服务器上创建文件错误", err)
@@ -87,4 +87,15 @@ func (utils Utils) SaveFile(file *multipart.FileHeader) (string, error) {
 		return "", err
 	}
 	return distFilename, nil
+}
+
+// 删除文件
+func (utils Utils) DeleteFile(filename string) bool {
+	os.Chdir(conf.APP.StaticPath.Local)
+	err := os.Remove(filename)
+	if err != nil {
+		log.Warn("删除" + filename + "出错！")
+		return false
+	}
+	return true
 }
