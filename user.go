@@ -9,6 +9,10 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+// TODO: 用户软删除
+// TODO: sql 注入，防止恶意攻击
+// TODO: 数据库备份计划
+
 type User struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
@@ -71,6 +75,7 @@ func (user User) ResetPassword(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
+	// TODO: 数据库判空
 	err := user.updatePassword(id, u.Password)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, &Response{
