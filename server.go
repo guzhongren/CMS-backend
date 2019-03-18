@@ -25,6 +25,9 @@ func main() {
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.DebugLevel)
 	e := echo.New()
+	e.Pre(middleware.RemoveTrailingSlash())
+	// XSS
+	e.Use(middleware.Secure())
 	e.Use(middleware.Logger())
 	e.Use(middleware.Recover())
 

@@ -9,7 +9,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// TODO: 用户软删除
 // TODO: sql 注入，防止恶意攻击
 // TODO: 数据库备份计划
 
@@ -75,8 +74,15 @@ func (user User) ResetPassword(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
-	// TODO: 数据库判空
-	err := user.updatePassword(id, u.Password)
+	_, err := user.getOne(id)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &Response{
+			Success: false,
+			Result:  "",
+			Message: "没有该用户，请使用合理的用户！",
+		})
+	}
+	err = user.updatePassword(id, u.Password)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, &Response{
 			Success: false,
@@ -149,16 +155,18 @@ func (user User) AddUser(c echo.Context) error {
 			Message: "参数错误",
 		})
 	}
-	_, err := user.GetUserByName(u.Name)
+	innerUser, err := user.GetUserByName(u.Name)
+	var utils = Utils{}
 	if err == nil {
-		log.Warn("已存在该用户，请使用新的用户名")
+		log.Info("已存在该用户，请使用新的用户名")
+		_ = user.updatePassword(innerUser.ID, utils.CryptoStr(u.Password))
+		_, _ = user.activeUser(innerUser.ID)
 		return c.JSON(http.StatusBadRequest, &Response{
-			Success: false,
-			Result:  "",
-			Message: "已存在该用户，请使用新的用户名",
+			Success: true,
+			Result:  innerUser.ID,
+			Message: "已存在该用户，请使用该用户名和密码登录！",
 		})
 	}
-	var utils = Utils{}
 	u.Password = utils.CryptoStr(u.Password)
 	u.ID = utils.GetGUID()
 	u.CreateTime = time.Now().Unix()
@@ -207,7 +215,7 @@ func (u User) insert(user User) (User, error) {
 
 // 删除用户
 func (u User) delete(id string) (string, error) {
-	stmt, err := db.Prepare("DELETE FROM b_user WHERE id=$1")
+	stmt, err := db.Prepare("UPDATE b_user SET isdeleted=true WHERE id=$1")
 	if err != nil {
 		log.Warn("删除用户：操作数据库错误", err)
 		return "", err
@@ -219,6 +227,24 @@ func (u User) delete(id string) (string, error) {
 		return id, err
 	}
 	log.Info("删除用户后", result)
+	if count, _ := result.RowsAffected(); count <= 0 {
+		return "", errors.New("没有该行数据")
+	}
+	return id, nil
+}
+func (u User) activeUser(id string) (string, error) {
+	stmt, err := db.Prepare("UPDATE b_user SET isdeleted=false WHERE id=$1")
+	if err != nil {
+		log.Warn("激活用户：操作数据库错误", err)
+		return "", err
+	}
+	defer stmt.Close()
+	result, err := stmt.Exec(id)
+	if err != nil {
+		log.Warn("执行激活用户错误", err)
+		return id, err
+	}
+	log.Info("激活用户后", result)
 	if count, _ := result.RowsAffected(); count <= 0 {
 		return "", errors.New("没有该行数据")
 	}
