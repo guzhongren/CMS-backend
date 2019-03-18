@@ -267,11 +267,10 @@ func (user User) getOne(id string) (UserResponse, error) {
 
 // 通过用户名查询用户
 func (user User) GetUserByName(userName string) (UserResponse, error) {
-	var sql = `select b.id, b.name, br.name from b_user b left join b_role br on b."roleId"=br.id where b.name=$1`
 	u := UserResponse{}
-	err := db.QueryRow(sql, userName).Scan(&u.ID, &u.Name, &u.Role)
+	err := db.QueryRow(`select b.id, b.name, br.name from b_user b left join b_role br on b."roleId"=br.id where b.name=$1`, userName).Scan(&u.ID, &u.Name, &u.Role)
 	if err != nil {
-		log.Warn("根据用户名查询用户出错", sql, err)
+		log.Warn("根据用户名查询用户出错", err)
 		return UserResponse{}, err
 	}
 	return u, nil
