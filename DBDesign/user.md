@@ -7,4 +7,4 @@
 |roleId|integer|角色|
 |password|integer[32]|密码|
 |joinTime|bigint|加入时间|
-|loginTime|bigint|加入时间|
+|loginTime|bigint|最后一次登录时间|
