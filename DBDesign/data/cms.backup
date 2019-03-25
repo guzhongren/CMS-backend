@@ -1,0 +1,402 @@
+--
+-- PostgreSQL database dump
+--
+
+-- Dumped from database version 11.2 (Debian 11.2-1.pgdg90+1)
+-- Dumped by pg_dump version 11.2
+
+SET statement_timeout = 0;
+SET lock_timeout = 0;
+SET idle_in_transaction_session_timeout = 0;
+SET client_encoding = 'UTF8';
+SET standard_conforming_strings = on;
+SELECT pg_catalog.set_config('search_path', '', false);
+SET check_function_bodies = false;
+SET client_min_messages = warning;
+SET row_security = off;
+
+SET default_tablespace = '';
+
+SET default_with_oids = false;
+
+--
+-- Name: b_material; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.b_material (
+    id character varying(32) NOT NULL,
+    "ownerId" character varying(32) NOT NULL,
+    location character varying(100),
+    type integer DEFAULT 1 NOT NULL,
+    count integer DEFAULT 0,
+    provider character varying(32),
+    "providerLink" character varying(128),
+    images character varying(200),
+    name character varying(32) NOT NULL,
+    "createTime" bigint,
+    "updateTime" bigint,
+    price numeric DEFAULT 0.00,
+    "updateUserId" character varying(32)
+);
+
+
+ALTER TABLE public.b_material OWNER TO postgres;
+
+--
+-- Name: TABLE b_material; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE public.b_material IS '物料表';
+
+
+--
+-- Name: COLUMN b_material.id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material.id IS 'guid';
+
+
+--
+-- Name: COLUMN b_material."ownerId"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material."ownerId" IS '上传用户id';
+
+
+--
+-- Name: COLUMN b_material.location; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material.location IS '物料存放位置';
+
+
+--
+-- Name: COLUMN b_material.type; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material.type IS '物料类型';
+
+
+--
+-- Name: COLUMN b_material.count; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material.count IS '物料数量';
+
+
+--
+-- Name: COLUMN b_material.provider; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material.provider IS '提供商名称';
+
+
+--
+-- Name: COLUMN b_material."providerLink"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material."providerLink" IS '提供商连接';
+
+
+--
+-- Name: COLUMN b_material.images; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material.images IS '物料图片id';
+
+
+--
+-- Name: COLUMN b_material.name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material.name IS '物料名称';
+
+
+--
+-- Name: COLUMN b_material."createTime"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material."createTime" IS '物料加入时间';
+
+
+--
+-- Name: COLUMN b_material."updateTime"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material."updateTime" IS '更新时间';
+
+
+--
+-- Name: COLUMN b_material.price; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material.price IS '金额';
+
+
+--
+-- Name: COLUMN b_material."updateUserId"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material."updateUserId" IS '最后更新用户';
+
+
+--
+-- Name: b_material_type; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.b_material_type (
+    id integer NOT NULL,
+    name character varying(32) NOT NULL
+);
+
+
+ALTER TABLE public.b_material_type OWNER TO postgres;
+
+--
+-- Name: TABLE b_material_type; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE public.b_material_type IS '物料类型';
+
+
+--
+-- Name: COLUMN b_material_type.name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_material_type.name IS '类型名称';
+
+
+--
+-- Name: b_role; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.b_role (
+    "roleId" integer NOT NULL,
+    name character varying(32) NOT NULL,
+    id character varying(32) NOT NULL
+);
+
+
+ALTER TABLE public.b_role OWNER TO postgres;
+
+--
+-- Name: TABLE b_role; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE public.b_role IS '角色表';
+
+
+--
+-- Name: COLUMN b_role."roleId"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_role."roleId" IS 'guid';
+
+
+--
+-- Name: COLUMN b_role.name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_role.name IS '角色名';
+
+
+--
+-- Name: COLUMN b_role.id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_role.id IS 'guid';
+
+
+--
+-- Name: b_user; Type: TABLE; Schema: public; Owner: postgres
+--
+
+CREATE TABLE public.b_user (
+    id character varying(32) NOT NULL,
+    name character varying(32) NOT NULL,
+    "roleId" character varying(32) NOT NULL,
+    password character varying(32),
+    "createTime" bigint,
+    "loginTime" bigint,
+    isdeleted boolean DEFAULT false NOT NULL
+);
+
+
+ALTER TABLE public.b_user OWNER TO postgres;
+
+--
+-- Name: TABLE b_user; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON TABLE public.b_user IS '用户表';
+
+
+--
+-- Name: COLUMN b_user.id; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_user.id IS 'guid';
+
+
+--
+-- Name: COLUMN b_user.name; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_user.name IS '用户名
+';
+
+
+--
+-- Name: COLUMN b_user."roleId"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_user."roleId" IS '角色id';
+
+
+--
+-- Name: COLUMN b_user.password; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_user.password IS '密码';
+
+
+--
+-- Name: COLUMN b_user."createTime"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_user."createTime" IS '加入时间';
+
+
+--
+-- Name: COLUMN b_user."loginTime"; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_user."loginTime" IS '最后登录时间';
+
+
+--
+-- Name: COLUMN b_user.isdeleted; Type: COMMENT; Schema: public; Owner: postgres
+--
+
+COMMENT ON COLUMN public.b_user.isdeleted IS '是否被标记为删除';
+
+
+--
+-- Data for Name: b_material; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.b_material (id, "ownerId", location, type, count, provider, "providerLink", images, name, "createTime", "updateTime", price, "updateUserId") FROM stdin;
+84970af63baa41923539ad19a468d645	6a67b113839fdcf8527be29b723dc859	西安市	1	10	guzhongren	https://guzhongren.github.io	aab608e25cc70959b5ff0f5045f09a19.jpg,c696c19afdcc03bb26e5a3d19ec02759.jpg,7237fad134b6c2e59ba99452a8dc94c3.jpg,1936b4649666ec0c25ae2447ed35a29e.jpg,4179869dbd9c95d917737a4b93f48816.jpg	测试11	1552821860	1552825504	200	6a67b113839fdcf8527be29b723dc859
+\.
+
+
+--
+-- Data for Name: b_material_type; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.b_material_type (id, name) FROM stdin;
+1	书籍
+2	电子券
+3	电子器件
+4	挂件
+5	纸质笔记本
+6	其他
+\.
+
+
+--
+-- Data for Name: b_role; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.b_role ("roleId", name, id) FROM stdin;
+1	admin	e7a773298e32408025559dff455246a8
+2	publish	a1e4d7e43b482feaf7fb0ac39e98c91
+\.
+
+
+--
+-- Data for Name: b_user; Type: TABLE DATA; Schema: public; Owner: postgres
+--
+
+COPY public.b_user (id, name, "roleId", password, "createTime", "loginTime", isdeleted) FROM stdin;
+6a67b113839fdcf8527be29b723dc859	admin	e7a773298e32408025559dff455246a8	295806dabf9090fd87901ad4a154ee3a	1552230490	\N	f
+b4586d1ee936c4436bab9b2677d7c7a3	test	a1e4d7e43b482feaf7fb0ac39e98c91	295806dabf9090fd87901ad4a154ee3a	1552230490	\N	f
+bb2dc3da7d6a25e0366f91de26ed75b0	test3	a1e4d7e43b482feaf7fb0ac39e98c91	295806dabf9090fd87901ad4a154ee3a	1552919208	\N	f
+dead8c7cb43e26656a6f7807dc22b22a	test4	a1e4d7e43b482feaf7fb0ac39e98c91	20cc6c77297759669aa2ede9910cd0a9	1552919214	\N	f
+\.
+
+
+--
+-- Name: b_material b_material_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.b_material
+    ADD CONSTRAINT b_material_pk PRIMARY KEY (id);
+
+
+--
+-- Name: b_material_type b_material_type_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.b_material_type
+    ADD CONSTRAINT b_material_type_pk PRIMARY KEY (id);
+
+
+--
+-- Name: b_role b_role_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.b_role
+    ADD CONSTRAINT b_role_pk PRIMARY KEY (id);
+
+
+--
+-- Name: b_user b_user_pk; Type: CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.b_user
+    ADD CONSTRAINT b_user_pk PRIMARY KEY (id);
+
+
+--
+-- Name: b_user_id_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX b_user_id_uindex ON public.b_user USING btree (id);
+
+
+--
+-- Name: b_user_name_uindex; Type: INDEX; Schema: public; Owner: postgres
+--
+
+CREATE UNIQUE INDEX b_user_name_uindex ON public.b_user USING btree (name);
+
+
+--
+-- Name: b_material b_material_b_material_type_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.b_material
+    ADD CONSTRAINT b_material_b_material_type_id_fk FOREIGN KEY (type) REFERENCES public.b_material_type(id);
+
+
+--
+-- Name: b_material b_material_b_user_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.b_material
+    ADD CONSTRAINT b_material_b_user_id_fk FOREIGN KEY ("ownerId") REFERENCES public.b_user(id);
+
+
+--
+-- Name: b_user b_user_b_role_id_fk; Type: FK CONSTRAINT; Schema: public; Owner: postgres
+--
+
+ALTER TABLE ONLY public.b_user
+    ADD CONSTRAINT b_user_b_role_id_fk FOREIGN KEY ("roleId") REFERENCES public.b_role(id);
+
+
+--
+-- PostgreSQL database dump complete
+--
+
