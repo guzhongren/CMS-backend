@@ -44,8 +44,8 @@ func (auth Auth) Login(c echo.Context) error {
 	if err := c.Bind(u); err != nil {
 		return echo.ErrBadRequest
 	}
-	username := c.FormValue("username")
-	password := c.FormValue("password")
+	username := u.Name
+	password := u.Password
 	// 从数据库中操作
 	if auth.checkUserAuth(username, password) {
 		token := jwt.New(jwt.SigningMethodHS256)

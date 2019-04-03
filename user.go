@@ -309,7 +309,7 @@ func (user User) GetUserByName(userName string) (UserResponse, error) {
 
 // 获取所有用户sql处理
 func (user User) GetAll() ([]UserResponse, error) {
-	rows, err := db.Query(`select b.id, b.name, br.name from b_user b left join b_role br on b."roleId" = br.id`)
+	rows, err := db.Query(`select b.id, b.name, b."createTime", br.name from b_user b left join b_role br on b."roleId" = br.id`)
 	if err != nil {
 		log.Warn("查询出错", err)
 		return []UserResponse{}, err
@@ -317,7 +317,7 @@ func (user User) GetAll() ([]UserResponse, error) {
 	var userList = []UserResponse{}
 	for rows.Next() {
 		user := UserResponse{}
-		err := rows.Scan(&user.ID, &user.Name, &user.Role)
+		err := rows.Scan(&user.ID, &user.Name, &user.CreateTime, &user.Role)
 		if err != nil {
 			log.Warn("处理查询结果出错", err)
 			return []UserResponse{}, err
