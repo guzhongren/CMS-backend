@@ -40,6 +40,10 @@ func (auth Auth) checkUserAuth(userName string, password string) bool {
 
 // 登录
 func (auth Auth) Login(c echo.Context) error {
+	u := new(User)
+	if err := c.Bind(u); err != nil {
+		return echo.ErrBadRequest
+	}
 	username := c.FormValue("username")
 	password := c.FormValue("password")
 	// 从数据库中操作
