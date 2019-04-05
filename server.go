@@ -39,6 +39,7 @@ func main() {
 
 	auth := Auth{}
 	user := User{}
+	role := Role{}
 	material := Material{}
 	var IsLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(conf.Secret),
@@ -64,6 +65,7 @@ func main() {
 	apiGroup.DELETE("/users/:id", user.DeleteUser, IsLoggedIn)
 	apiGroup.PUT("/users/:id", user.UpdateUser, IsLoggedIn)
 	apiGroup.PUT("/users/:id/resetPassword", user.ResetPassword, IsLoggedIn)
+	apiGroup.GET("/roles", role.GetAll, IsLoggedIn)
 	apiGroup.GET("/materials/types", material.GetMaterialType, IsLoggedIn)
 	apiGroup.GET("/materials/types/:id", material.GetMaterialTypeById, IsLoggedIn)
 	apiGroup.POST("/materials", material.Add, IsLoggedIn)
