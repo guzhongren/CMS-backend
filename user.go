@@ -289,7 +289,7 @@ func (u User) updatePassword(id, newPW string) error {
 // 通过用户id查询用户
 func (user User) getOne(id string) (UserResponse, error) {
 	u := UserResponse{}
-	err := db.QueryRow(`select b.id, b.name, b."createTime", br.name from b_user b left join b_role br on b."roleId"= br.id where b.id=$1`, id).Scan(&u.ID, &u.Name, &u.CreateTime, &u.Role)
+	err := db.QueryRow(`select b.id, b.name, b."createTime", br.name, br.id from b_user b left join b_role br on b."roleId"= br.id where b.id=$1`, id).Scan(&u.ID, &u.Name, &u.CreateTime, &u.Role, &u.RoleId)
 	if err != nil {
 		log.Warn("查询用户出错", err)
 		return UserResponse{}, err
@@ -310,7 +310,7 @@ func (user User) GetUserByName(userName string) (UserResponse, error) {
 
 // 获取所有用户sql处理
 func (user User) GetAll() ([]UserResponse, error) {
-	rows, err := db.Query(`select b.id, b.name, b."createTime", br.name, br.id from b_user b left join b_role br on b."roleId" = br.id`)
+	rows, err := db.Query(`select b.id, b.name, b."createTime", br.name, br.id from b_user b left join b_role br on b."roleId" = br.id where b.isdeleted=false`)
 	if err != nil {
 		log.Warn("查询出错", err)
 		return []UserResponse{}, err
