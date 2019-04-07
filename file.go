@@ -38,3 +38,23 @@ func (file File) Upload(c echo.Context) error {
 		Message: "",
 	})
 }
+
+// 根据文件名删除文件
+func (file File) Delete(c echo.Context) error {
+	name := c.Param("name")
+	utils := Utils{}
+	isDeleted := utils.DeleteFile(name)
+	if isDeleted {
+		return c.JSON(http.StatusOK, &Response{
+			Success: true,
+			Result:  true,
+			Message: "",
+		})
+	} else {
+		return c.JSON(http.StatusInternalServerError, &Response{
+			Success: false,
+			Result:  false,
+			Message: "删除失败，服务器内部错误",
+		})
+	}
+}

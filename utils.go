@@ -75,10 +75,6 @@ func (utils Utils) SaveFile(file *multipart.FileHeader) (string, error) {
 		log.Warn("文件名需带扩展名")
 		return "", errors.New("文件名需带扩展名")
 	}
-	_, err = os.Stat(conf.APP.StaticPath.Local)
-	if err != nil {
-		os.Mkdir(conf.APP.StaticPath.Local, os.ModePerm)
-	}
 	os.Chdir(conf.APP.StaticPath.Local)
 	distFilename := fileID + "." + fileExt
 	dist, err := os.Create(distFilename)
