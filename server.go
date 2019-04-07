@@ -71,7 +71,7 @@ func main() {
 	apiGroup.GET("/materials/types/:id", material.GetMaterialTypeById, IsLoggedIn)
 	apiGroup.POST("/materials", material.Add, IsLoggedIn)
 	apiGroup.POST("/file/upload", file.Upload)
-	apiGroup.POST("/file/delete/:name", file.Delete)
+	apiGroup.DELETE("/file/delete/:name", file.Delete)
 	apiGroup.DELETE("/materials/:id", material.Delete, IsLoggedIn)
 	apiGroup.PUT("/materials/:id", material.Update, IsLoggedIn)
 	apiGroup.GET("/materials", material.GetAll, IsLoggedIn)
