@@ -16,7 +16,6 @@ import (
 type Material struct {
 	ID           string  `json:"id"`
 	OwnerID      string  `json:"ownerId"`
-	UpdateUserID string  `json:"updateUserId"`
 	Name         string  `json:"name"`
 	Location     string  `json:"location"`
 	Type         int     `json:"type"`
@@ -26,12 +25,13 @@ type Material struct {
 	Images       string  `json:"images"`
 	CreateTime   int64   `json:"createTime"`
 	UpdateTime   int64   `json:"updateTime"`
+	UpdateUserID string  `json:"updateUserId"`
 	Price        float64 `json:"price"`
 }
 
 // 物料类型
 type MaterialType struct {
-	ID   string `json:"id"`
+	ID   int64  `json:"id"`
 	Name string `json:"name"`
 }
 
@@ -423,7 +423,7 @@ func (material Material) selectAll() ([]MaterialResponse, error) {
 
 // 根据id获取特定的物料类型
 func (material Material) getMaterialTypeById(id int) (MaterialType, error) {
-	var ID string
+	var ID int64
 	var name string
 	err := db.QueryRow(`select id,name from b_material_type where id=$1`, id).Scan(&ID, &name)
 	if err != nil {

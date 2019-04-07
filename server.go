@@ -41,6 +41,7 @@ func main() {
 	user := User{}
 	role := Role{}
 	material := Material{}
+	file := File{}
 	var IsLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(conf.Secret),
 		Skipper:    auth.skipper,
@@ -69,6 +70,7 @@ func main() {
 	apiGroup.GET("/materials/types", material.GetMaterialType, IsLoggedIn)
 	apiGroup.GET("/materials/types/:id", material.GetMaterialTypeById, IsLoggedIn)
 	apiGroup.POST("/materials", material.Add, IsLoggedIn)
+	apiGroup.POST("/upload", file.Upload, IsLoggedIn)
 	apiGroup.DELETE("/materials/:id", material.Delete, IsLoggedIn)
 	apiGroup.PUT("/materials/:id", material.Update, IsLoggedIn)
 	apiGroup.GET("/materials", material.GetAll, IsLoggedIn)
