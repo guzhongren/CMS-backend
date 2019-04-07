@@ -28,14 +28,14 @@ func (auth Auth) skipper(c echo.Context) bool {
 	return false
 }
 
-func (auth Auth) checkUserAuth(userName string, password string) bool {
+func (auth Auth) checkUserAuth(userName string, password string) (UserResponse, error) {
 	user := User{}
 	userInfo, err := user.GetUserByName(userName)
 	if err != nil {
-		return false
+		return UserResponse{}, err
 	}
 	log.Info("Auth:", userInfo)
-	return true
+	return userInfo, nil
 }
 
 // 登录
@@ -47,7 +47,8 @@ func (auth Auth) Login(c echo.Context) error {
 	username := u.Name
 	password := u.Password
 	// 从数据库中操作
-	if auth.checkUserAuth(username, password) {
+	userInfo, err := auth.checkUserAuth(username, password)
+	if err == nil {
 		token := jwt.New(jwt.SigningMethodHS256)
 		claims := token.Claims.(jwt.MapClaims)
 		claims["name"] = username
@@ -63,13 +64,15 @@ func (auth Auth) Login(c echo.Context) error {
 				Message: "请获取 token 并在 HEADER 中设置 token!",
 			})
 		}
-		type Token struct {
-			Token string `json:"token"`
+		type LoginState struct {
+			Token    string       `json:"token"`
+			UserInfo UserResponse `json:"userInfo"`
 		}
 		return c.JSON(http.StatusOK, &Response{
 			Success: true,
-			Result: Token{
-				Token: t,
+			Result: LoginState{
+				Token:    t,
+				UserInfo: userInfo,
 			},
 			Message: "",
 		})
