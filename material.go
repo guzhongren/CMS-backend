@@ -205,18 +205,18 @@ func (material Material) Update(c echo.Context) error {
 			Message: "更新：获取物料数据错！",
 		})
 	}
-	// 文件上传
-	form, err := c.MultipartForm()
-	if err != nil {
-		log.Warn("获取form 出错！", err)
-		return c.JSON(http.StatusInternalServerError, &Response{
-			Success: false,
-			Result:  "",
-			Message: "服务器内部错误",
-		})
-	}
-	files := form.File["images"]
-	savedFileIDArr, err := utils.UploadFiles(files)
+	// // 文件上传
+	// form, err := c.MultipartForm()
+	// if err != nil {
+	// 	log.Warn("获取form 出错！", err)
+	// 	return c.JSON(http.StatusInternalServerError, &Response{
+	// 		Success: false,
+	// 		Result:  "",
+	// 		Message: "服务器内部错误",
+	// 	})
+	// }
+	// files := form.File["images"]
+	// savedFileIDArr, err := utils.UploadFiles(files)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, &Response{
 			Success: false,
@@ -233,7 +233,7 @@ func (material Material) Update(c echo.Context) error {
 			utils.DeleteFile(filename)
 		}
 	}
-	m.Images = strings.Join(savedFileIDArr, ",")
+	// m.Images = strings.Join(savedFileIDArr, ",")
 	m.ID = id
 	m.OwnerID = dbMaterial.Owner.ID
 	m.UpdateUserID = user.ID
@@ -382,7 +382,7 @@ func (material Material) getOne(id string) (MaterialResponse, error) {
 
 // 获取所有物料及信息
 func (material Material) selectAll() ([]MaterialResponse, error) {
-	rows, err := db.Query(`select m.id, m.name, m.location, m.materialType, m.count, m.provider, m."providerLink", m.images, m."createTime", m."updateTime", cast(m.price as float), u.id as ownerId, u.name from (select m1.id,m1."ownerId", m1.name, m1.location, bmt.name as materialType, m1.count, m1.provider,m1."providerLink",m1.images, m1."createTime",m1."updateTime", m1.price from b_material m1 left join b_material_type bmt on m1.type = bmt.id) as m left join b_user u on m."ownerId"=u.id`)
+	rows, err := db.Query(`select m2.id, m2.name, m2.location, m2.materialType, m2.count, m2.provider, m2."providerLink", m2.images, m2."createTime", m2."updateTime", m2."updateUserId",b_user.name as updateUserName,  cast(m2.price as float), m2 ownerId, m2.ownerName from (select m.id, m.name, m.location, m.materialType, m.count, m.provider, m."providerLink", m.images, m."createTime", m."updateTime", m."updateUserId", m.price, u.id as ownerId, u.name as ownerName from (select m1.id,m1."ownerId", m1.name, m1.location, bmt.name as materialType, m1.count, m1.provider,m1."providerLink",m1.images, m1."createTime",m1."updateTime", m1."updateUserId", m1.price from b_material m1 left join b_material_type bmt on m1.type = bmt.id) as m left join b_user u on m."ownerId"=u.id) as m2 left join b_user on b_user.id = m2."updateUserId"`)
 	if err != nil {
 		log.Warn("查询所有物料出错", err)
 		return []MaterialResponse{}, err
@@ -390,7 +390,7 @@ func (material Material) selectAll() ([]MaterialResponse, error) {
 	var materialList = []MaterialResponse{}
 	for rows.Next() {
 		materialResponse := MaterialResponse{}
-		err := rows.Scan(&materialResponse.ID, &materialResponse.Name, &materialResponse.Location, &materialResponse.TypeName, &materialResponse.Count, &materialResponse.Provider, &materialResponse.ProviderLink, &materialResponse.Images, &materialResponse.CreateTime, &materialResponse.UpdateTime, &materialResponse.Price, &materialResponse.Owner.ID, &materialResponse.Owner.Name)
+		err := rows.Scan(&materialResponse.ID, &materialResponse.Name, &materialResponse.Location, &materialResponse.TypeName, &materialResponse.Count, &materialResponse.Provider, &materialResponse.ProviderLink, &materialResponse.Images, &materialResponse.CreateTime, &materialResponse.UpdateTime, &materialResponse.UpdateUser.ID, &materialResponse.UpdateUser.Name, &materialResponse.Price, &materialResponse.Owner.ID, &materialResponse.Owner.Name)
 		if err != nil {
 			log.Warn("处理查询结果出错", err)
 			return []MaterialResponse{}, err
