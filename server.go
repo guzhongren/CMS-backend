@@ -1,7 +1,6 @@
 package main
 
 import (
-	"net/http"
 	"os"
 
 	"database/sql"
@@ -50,9 +49,10 @@ func main() {
 	db = getDB(dbInfo.Host, dbInfo.Port, dbInfo.Username, dbInfo.Password, dbInfo.Db)
 	defer db.Close()
 
-	e.GET("/", func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "Hello! Welcome to CMS!")
-	})
+	// e.GET("/", func(c echo.Context) error {
+	// 	return c.JSON(http.StatusOK, "Hello! Welcome to CMS!")
+	// })
+	e.Static("/", "App")
 
 	h := &handler{}
 	apiGroup := e.Group("/api/" + conf.Version)

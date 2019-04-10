@@ -13,3 +13,5 @@
 *.DS_Store
 assets/
 /debug
+/App
+CMS-backend
