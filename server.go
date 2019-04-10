@@ -40,6 +40,7 @@ func main() {
 	user := User{}
 	role := Role{}
 	material := Material{}
+	system := System{}
 	file := File{}
 	var IsLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(conf.Secret),
@@ -59,6 +60,7 @@ func main() {
 	apiGroup.Static(conf.APP.StaticPath.Http, conf.APP.StaticPath.Local)
 
 	apiGroup.POST("/login", auth.Login)
+	apiGroup.GET("/statistic", system.Statistic, IsLoggedIn)
 	// 查询所有用户
 	apiGroup.GET("/users", user.GetAllUsers, IsLoggedIn)
 	apiGroup.GET("/users/:id", user.GetUser, IsLoggedIn)
