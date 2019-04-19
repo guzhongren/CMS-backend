@@ -9,9 +9,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// TODO: sql 注入，防止恶意攻击
-// TODO: 数据库备份计划
-
 type User struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
@@ -147,6 +144,22 @@ func (user User) GetUser(c echo.Context) error {
 
 // 新增用户
 func (user User) AddUser(c echo.Context) error {
+	utils := Utils{}
+	userResponse, err := utils.GetUserFromContext(c)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, &Response{
+			Success: false,
+			Result:  "",
+			Message: "参数错误",
+		})
+	}
+	if userResponse.Role != "publish" {
+		return c.JSON(http.StatusUpgradeRequired, &Response{
+			Success: false,
+			Result:  "",
+			Message: "该角色没有添加用户的权限！",
+		})
+	}
 	u := new(User)
 	if err := c.Bind(u); err != nil {
 		log.Warn("绑定数据错误", err)
@@ -157,7 +170,6 @@ func (user User) AddUser(c echo.Context) error {
 		})
 	}
 	innerUser, err := user.GetUserByName(u.Name)
-	var utils = Utils{}
 	if err == nil {
 		log.Info("已存在该用户，请使用新的用户名")
 		_ = user.updatePassword(innerUser.ID, utils.CryptoStr(u.Password))
