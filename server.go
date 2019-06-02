@@ -2,7 +2,7 @@ package main
 
 import (
 	"os"
-
+	"net/http"
 	"database/sql"
 
 	"github.com/labstack/echo"
@@ -11,10 +11,6 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-// var (
-// 	db   *sql.DB
-// 	conf *Conf
-// )
 var db = new(sql.DB)
 var conf = new(Conf)
 func main() {
@@ -51,9 +47,9 @@ func main() {
 	db = getDB(dbInfo.Host, dbInfo.Port, dbInfo.Username, dbInfo.Password, dbInfo.Db)
 	defer db.Close()
 
-	// e.GET("/", func(c echo.Context) error {
-	// 	return c.JSON(http.StatusOK, "Hello! Welcome to CMS!")
-	// })
+	e.GET("/test", func(c echo.Context) error {
+		return c.JSON(http.StatusOK, "Hello! Welcome to CMS!")
+	})
 	e.Static("/", "App")
 
 	h := &handler{}
