@@ -10,5 +10,6 @@
             "server": "47.95.247.139",
             "username": "postgres"
         }
-    ]
+    ],
+    "go.formatTool": "goimports"
 }
