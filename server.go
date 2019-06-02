@@ -11,11 +11,12 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
-var (
-	db   *sql.DB
-	conf *Conf
-)
-
+// var (
+// 	db   *sql.DB
+// 	conf *Conf
+// )
+var db = new(sql.DB)
+var conf = new(Conf)
 func main() {
 	utils := Utils{}
 	utils.LoadConfig()
