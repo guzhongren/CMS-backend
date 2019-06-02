@@ -4,7 +4,8 @@ pipeline {
     stages {
         stage('Test') {
             steps {
-                go test
+                sh 'go clean -cache'
+                sh 'go test'
             }
         }
         stage('Build') {
