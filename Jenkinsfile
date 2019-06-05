@@ -2,6 +2,9 @@ pipeline {
     agent any
 
     stages {
+        stage('获取SCM') {
+            checkout scm
+        }
         stage('Test') {
             steps {
                 sh 'export CGO_ENABLED=0'
