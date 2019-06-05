@@ -10,7 +10,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'export CGO_ENABLED=0'
-                sh 'go clean -cache'
+                // sh 'go clean -cache'
                 sh 'go test'
             }
         }
