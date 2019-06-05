@@ -3,7 +3,9 @@ pipeline {
 
     stages {
         stage('获取SCM') {
-            checkout scm
+            steps{
+                checkout scm
+            }
         }
         stage('Test') {
             steps {
