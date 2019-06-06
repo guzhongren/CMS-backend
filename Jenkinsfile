@@ -1,6 +1,6 @@
 pipeline {
     agent any
-
+    tools {go "go1.12"}
     stages {
         stage('获取SCM') {
             steps{
