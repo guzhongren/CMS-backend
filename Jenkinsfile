@@ -12,7 +12,7 @@ pipeline {
                 sh 'ls -a'
                 sh 'export CGO_ENABLED=0'
                 sh 'go clean -cache'
-                sh 'go test'
+                sh 'cd test && go test'
             }
         }
         stage('Build') {
