@@ -21,6 +21,11 @@ pipeline {
                 sh 'go test ./... -v -short'
             }
         }
+        stage('构建镜像') {
+            steps {
+                sh 'docker version'
+            }
+        }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
