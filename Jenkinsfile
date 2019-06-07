@@ -1,13 +1,14 @@
 pipeline {
     // agent any
-    agent {
-        docker { 
-            image 'golang'
-            args '-u 0:0'
-        }
-    }
+    
     // tools {go "go1.12"}
     stages {
+        agent {
+            docker { 
+                image 'golang'
+                args '-u 0:0'
+            }
+        }
         stage('获取SCM') {
             steps{
                 checkout scm
@@ -21,6 +22,8 @@ pipeline {
                 sh 'go test ./... -v -short'
             }
         }
+    }
+    stages {
         stage('构建镜像') {
             steps {
                 sh 'docker version'
