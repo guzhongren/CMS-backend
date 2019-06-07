@@ -28,9 +28,7 @@ pipeline {
         // }
         stage('Test') {
             steps {
-                sh 'cd ${GOPATH}/src'
-                sh 'mkdir -p ${GOPATH}/src/CMS-backend'
-                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/CMS-backend'
+                sh 'whoami'
                 sh 'export CGO_ENABLED=0'
                 sh 'go clean -cache'
                 sh 'go test ./... -v -short'
