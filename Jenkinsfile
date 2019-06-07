@@ -13,6 +13,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'export CGO_ENABLED=0'
+                sh 'mkdir /.cache'
                 sh 'go clean -cache'
                 sh 'go test ./... -v -short'
             }
