@@ -16,7 +16,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'export CGO_ENABLED=0'
-                sh 'export GOPROXY=https://goproxy.cn'
+                sh 'export GOPROXY=https://goproxy.io'
                 sh 'go clean -cache'
                 sh 'go test ./... -v -short'
             }
