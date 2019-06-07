@@ -9,7 +9,6 @@ pipeline {
         }
         stage('Test') {
             steps {
-                sh 'ls -a'
                 sh 'export CGO_ENABLED=0'
                 sh 'go clean -cache'
                 sh 'go test ./... -v -short'
@@ -34,7 +33,7 @@ pipeline {
             echo '执行失败'
         }
         success{
-            echo '执行成功'
+            echo 'pipeline 执行成功'
         }
         unstable{
             echo '测试失败，需要检查测试或者查看编码规范！'
