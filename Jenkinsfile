@@ -10,17 +10,30 @@ pipeline {
                 checkout scm
             }
         }
+        // stage('Build') {                
+        //     steps {      
+        //         // Create our project directory.
+        //         sh 'cd ${GOPATH}/src'
+        //         sh 'mkdir -p ${GOPATH}/src/CMS-backend'
+
+        //         // Copy all files in our Jenkins workspace to our project directory.                
+        //         sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/CMS-backend'
+
+        //         // Copy all files in our "vendor" folder to our "src" folder.
+        //         // sh 'cp -r ${WORKSPACE}/vendor/* ${GOPATH}/src'
+
+        //         // Build the app.
+        //         sh 'go build'
+        //     }            
+        // }
         stage('Test') {
             steps {
+                sh 'cd ${GOPATH}/src'
+                sh 'mkdir -p ${GOPATH}/src/CMS-backend'
+                sh 'cp -r ${WORKSPACE}/* ${GOPATH}/src/CMS-backend'
                 sh 'export CGO_ENABLED=0'
-                // sh 'sudo su -'
                 sh 'go clean -cache'
                 sh 'go test ./... -v -short'
-            }
-        }
-        stage('Build') {
-            steps {
-                echo 'Building..'
             }
         }
         stage('Deploy') {
