@@ -24,7 +24,7 @@ pipeline {
         stage('构建镜像') {
             steps{
                 echo '构建。。。'
-                sh 'docker build -t cms-back .'
+                sh 'docker build -t cms-backend .'
             }
         }
         stage('Deploy') {
