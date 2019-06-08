@@ -1,12 +1,12 @@
 pipeline {
-    // agent any
-    agent {
-        docker { 
-            image 'golang'
-            args '-u 0:0'
-        }
-    }
-    // tools {go "go1.12"}
+    agent any
+    // agent {
+    //     docker { 
+    //         image 'golang'
+    //         args '-u 0:0'
+    //     }
+    // }
+    tools {go "go1.12"}
     stages {
         stage('获取SCM') {
             steps{
@@ -16,6 +16,7 @@ pipeline {
         stage('Test') {
             steps {
                 sh 'export CGO_ENABLED=0'
+                sh 'export GOPROXY=https://goproxy.io'
                 sh 'go clean -cache'
                 sh 'go test ./... -v -short'
             }
