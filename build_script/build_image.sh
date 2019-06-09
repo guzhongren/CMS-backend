@@ -6,7 +6,7 @@ GIT_REVISION=`git log -1 --pretty=format:"%H"`
 # IMAGE_NAME=hub.k8s.com:8080/cms/${MODULE}:${TIME}_${GIT_REVISION}
 IMAGE_NAME=${MODULE}:${TIME}_${GIT_REVISION}
 
-# cd ${MODULE}
+cd ../
 
 docker build -t ${IMAGE_NAME} .
 

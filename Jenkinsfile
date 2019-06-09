@@ -24,7 +24,7 @@ pipeline {
         stage('构建镜像') {
             steps{
                 echo '开始构建镜像。。。'
-                sh './build_image.sh cms-backend'
+                sh './build_script/build_image.sh cms-backend'
             }
         }
         stage('Deploy') {
