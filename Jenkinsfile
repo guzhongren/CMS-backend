@@ -23,8 +23,8 @@ pipeline {
         }
         stage('构建镜像') {
             steps{
-                echo '构建。。。'
-                sh 'docker build -t cms-backend .'
+                echo '开始构建镜像。。。'
+                sh './build_image.sh cms-backend'
             }
         }
         stage('Deploy') {
