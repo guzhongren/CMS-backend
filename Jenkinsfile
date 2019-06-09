@@ -21,18 +21,18 @@ pipeline {
                 sh 'go test ./... -v -short'
             }
         }
-        stage('构建镜像') {
+        stage('构建并推送镜像') {
             steps{
                 echo '开始构建镜像。。。'
-                sh './build_script/build_image.sh cms-backend'
+                sh './build_script/build_image.sh backend'
             }
         }
-        stage('保留最新的三个镜像') {
-            steps{
-                echo '删除最新三个以外的镜像...'
-                // sh './build_script/build_image.sh cms-backend'
-            }
-        }
+        // stage('保留本地最新的三个镜像') {
+        //     steps{
+        //         echo '删除最新三个以外的镜像...'
+        //         // sh './build_script/build_image.sh cms-backend'
+        //     }
+        // }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
