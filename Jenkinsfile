@@ -27,6 +27,12 @@ pipeline {
                 sh './build_script/build_image.sh cms-backend'
             }
         }
+        stage('保留最新的三个镜像') {
+            steps{
+                echo '删除最新三个以外的镜像...'
+                // sh './build_script/build_image.sh cms-backend'
+            }
+        }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
