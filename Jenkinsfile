@@ -24,7 +24,9 @@ pipeline {
         stage('构建并推送镜像') {
             steps{
                 echo '开始构建镜像。。。'
-                sh './build_script/build_image.sh backend'
+                withCredentials([usernamePassword(credentialsId: 'docker-register', passwordVariable: 'dockerPassword', usernameVariable: 'dockerUser')]) {
+                    sh "./build_script/build_image.sh ${dockerUser} ${dockerPassword} backend"
+                }
             }
         }
         // stage('保留本地最新的三个镜像') {
