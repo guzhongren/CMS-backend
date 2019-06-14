@@ -4,7 +4,7 @@ HUB_DOMAIN=$1
 DOCKERUSER=$2
 DOCKERPASSWORD=$3
 PROJECT=$4
-APP=$5i
+APP=$5
 
 echo "私有仓库域: ${HUB_DOMAIN}"
 echo "docker 用户名: ${DOCKERUSER}"
