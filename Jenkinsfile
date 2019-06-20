@@ -22,7 +22,7 @@ pipeline {
             steps {
                 sh 'export CGO_ENABLED=0'
                 sh 'export GO111MODULE=on'
-                sh 'export GOPROXY=https://goproxy.io'
+                sh 'export GOPROXY=https://goproxy.cn'
                 sh 'go clean -cache'
                 sh 'go test ./... -v -short'
             }
