@@ -9,7 +9,7 @@ pipeline {
     parameters {
         string(name: 'hub_domain', defaultValue: 'hub.k8s.com', description: 'docker 私有仓库域')
         string(name: 'project_name', defaultValue: 'backend', description: '项目名称')
-        string(name: 'app_name', defaultValue: 'cmsContainer', description: 'docker应用名称')
+        string(name: 'app_name', defaultValue: 'cmsContainer', description: '容器名称')
     }
     tools {go "go1.12"}
     stages {
@@ -44,7 +44,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                sh "./build_script/deploy_image.sh backend ${params.app_name}"
+                sh "./build_script/deploy_image.sh ${params.project_name} ${params.app_name}"
             }
         }
     }
