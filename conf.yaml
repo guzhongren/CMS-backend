@@ -9,7 +9,7 @@ cms:
       http: /static
       local: assets
   db:
-    host: 127.0.0.1
+    host: db.k8s.com
     port: 5432
     username: postgres
     password: 000000
