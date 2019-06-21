@@ -10,7 +10,7 @@ cms:
       local: assets
   db:
     host: postgres
-    port: 5432
+    port: 35432
     username: postgres
     password: 000000
     db: cms
