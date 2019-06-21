@@ -8,8 +8,8 @@ pipeline {
     // }
     parameters {
         string(name: 'hub_domain', defaultValue: 'hub.k8s.com', description: 'docker 私有仓库域')
-        string(name: 'project_name', defaultValue: 'backend', description: '项目名称')
-        string(name: 'app_name', defaultValue: 'cmsContainer', description: '容器名称')
+        string(name: 'project_name', defaultValue: 'cms', description: '项目名称')
+        string(name: 'app_name', defaultValue: 'backend', description: '容器名称')
     }
     tools {go "go1.12"}
     stages {
