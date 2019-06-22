@@ -35,16 +35,10 @@ pipeline {
                 }
             }
         }
-        // stage('保留本地最新的三个镜像') {
-        //     steps{
-        //         echo '删除最新三个以外的镜像...'
-        //         // sh './build_script/build_image.sh cms-backend'
-        //     }
-        // }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                sh "./build_script/deploy_image.sh ${params.project_name} ${params.app_name}"
+                sh "./build_script/deploy_image.sh ${params.app_name} ${params.app_name}"
             }
         }
     }

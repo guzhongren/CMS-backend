@@ -1,0 +1,42 @@
+auth.go:33 +0xcf\n
+main.Auth.Login(0x9bafc0, 0xc0000eb8f0, 0x36af3a9d, 0x561b78b8eb3baf04)\n
+\t/cms/auth.go:50 +0xc6\n
+github.com/labstack/echo.(*Echo).Add.func1(0x9bafc0, 0xc0000eb8f0, 0x90aff5, 0x1b)\n
+\t/go/pkg/mod/github.com/labstack/echo@v3.3.10+incompatible/echo.go:490 +0x87\n
+github.com/labstack/echo/middleware.CORSWithConfig.func1.1(0x9bafc0, 0xc0000eb8f0, 0x9214d8, 0x1000)\n
+\t/go/pkg/mod/github.com/labstack/echo@v3.3.10+incompatible/middleware/cors.go:117 +0x408\n
+github.com/labstack/echo/middleware.RecoverWithConfig.func1.1(0x9bafc0, 0xc0000eb8f0, 0x0, 0x0)\n
+\t/go/pkg/mod/github.com/labstack/echo@v3.3.10+incompatible/middleware/recover.go:78 +0xd5\n
+github.com/labstack/echo/middleware.LoggerWithConfig.func2.1(0x9bafc0, 0xc0000eb8f0, 0x11, 0x0)\n
+\t/go/pkg/mod/github.com/labstack/echo@v3.3.10+incompatible/middleware/logger.go:118 +0x1c0\n
+github.com/labstack/echo/middleware.SecureWithConfig.func1.1(0x9bafc0, 0xc0000eb8f0, 0x4, 0xc000027d25)\n
+\t/go/pkg/mod/github.com/labstack/echo@v3.3.10+incompatible/middleware/secure.go:113 +0x168\n
+github.com/labstack/echo.(*Echo).ServeHTTP.func1(0x9bafc0, 0xc0000eb8f0, 0x0, 0xc000040380)\n
+\t/go/pkg/mod/github.com/labstack/echo@v3.3.10+incompatible/echo.go:585 +0x106\n
+github.com/labstack/echo/middleware.RemoveTrailingSlashWithConfig.func1.1(0x9bafc0, 0xc0000eb8f0, 0xc0000eb8f0, 0x922020)\n
+\t/go/pkg/mod/github.com/labstack/echo@v3.3.10+incompatible/middleware/slash.go:116 +0x17c\n
+github.com/labstack/echo.(*Echo).ServeHTTP(0xc0000e01c0, 0x9ad2e0, 0xc00014c0e0, 0xc00014a100)\n
+\t/go/pkg/mod/github.com/labstack/echo@v3.3.10+incompatible/echo.go:593 +0x221\n
+net/http.serverHandler.ServeHTTP(0xc00006d040, 0x9ad2e0, 0xc00014c0e0, 0xc00014a100)\n
+\t/usr/local/go/src/net/http/server.go:2774 +0xa8\n
+net/http.(*conn).serve(0xc000063220, 0x9ae0e0, 0xc000052dc0)\n
+\t/usr/local/go/src/net/http/server.go:1878 +0x851\n
+created by net/http.(*Server).Serve\n
+\t/usr/local/go/src/net/http/server.go:2884 +0x2f4\n
+\ngoroutine 1 [IO wait]:\n
+internal/poll.runtime_pollWait(0x7f8c7b1f0f08, 0x72, 0x0)\n
+\t/usr/local/go/src/runtime/netpoll.go:182 +0x56\n
+internal/poll.(*pollDesc).wait(0xc0000d1718, 0x72, 0x0, 0x0, 0x901bd8)\n\
+t/usr/local/go/src/internal/poll/fd_poll_runtime.go:87 +0x9b\n
+internal/poll.(*pollDesc).waitRead(...)\n
+\t/usr/local/go/src/internal/poll/fd_poll_runtime.go:92\n
+internal/poll.(*FD).Accept(0xc0000d1700, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0, 0x0)\n
+\t/usr/local/go/src/internal/poll/fd_unix.go:384 +0x1ba\n
+net.(*netFD).accept(0xc0000d1700, 0xb4, 0x203000, 0x203000)\n
+\t/usr/local/go/src/net/fd_unix.go:238 +0x42\n
+net.(*TCPListener).accept(0xc00000e230, 0xc00002a000, 0x40b8a9, 0xc0000632c0)\n
+\t/usr/local/go/src/net/tcpsock_posix.go:139 +0x32\n
+net.(*TCPListener).AcceptTCP(0xc00000e230, 0xe671d831, 0xb70ae33f1c66b746, 0x449a68)\n
+\t/usr/local/go/src/net/tcpsock.go:247 +0x48\n
+github.com/labstack/echo.tcpKeepAliveListener.Accept(0xc00000e230, 0xc000111918, 0x4b3d36, 0x5d0de7b8,\n"}
+{"time":"2019-06-22T08:33:06.547184578Z","id":"","remote_ip":"10.244.9.1","host":"api.k8s.com:32555","method":"POST","uri":"/api/v1/login","user_agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/75.0.3770.100 Safari/537.36","status":500,"error":"","latency":308828,"latency_human":"308.828µs","bytes_in":26,"bytes_out":36}
