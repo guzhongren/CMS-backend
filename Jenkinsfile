@@ -9,7 +9,9 @@ pipeline {
     parameters {
         string(name: 'hub_domain', defaultValue: 'hub.k8s.com', description: 'docker 私有仓库域')
         string(name: 'project_name', defaultValue: 'cms', description: '项目名称')
-        string(name: 'app_name', defaultValue: 'backend', description: '容器名称')
+        string(name: 'namespace_name', defaultValue: 'cms', description: 'namespace名称')
+        string(name: 'deployment_name', defaultValue: 'backend', description: 'deployment 名称')
+        string(name: 'container_name', defaultValue: 'backend', description: '容器名称')
     }
     tools {go "go1.12"}
     stages {
@@ -31,14 +33,14 @@ pipeline {
             steps{
                 echo '开始构建镜像。。。'
                 withCredentials([usernamePassword(credentialsId: 'docker-register', passwordVariable: 'dockerPassword', usernameVariable: 'dockerUser')]) {
-                    sh "./build_script/build_image.sh ${params.hub_domain} ${dockerUser} ${dockerPassword} ${params.project_name} ${params.app_name}"
+                    sh "./build_script/build_image.sh ${params.hub_domain} ${dockerUser} ${dockerPassword} ${params.project_name} ${params.container_name}"
                 }
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                sh "./build_script/deploy_image.sh ${params.app_name} ${params.app_name}"
+                sh "./build_script/deploy_image.sh ${params.namespace_name} ${params.deployment_name} ${params.container_name}"
             }
         }
     }
