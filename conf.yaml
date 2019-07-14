@@ -9,7 +9,7 @@ cms:
       http: /static
       local: assets
   db:
-    host: backend-service
+    host: db
     port: 5432
     username: postgres
     password: 000000
