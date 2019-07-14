@@ -3,6 +3,7 @@ package main
 import (
 	"os"
 	"net/http"
+	"time"
 	"database/sql"
 
 	"github.com/labstack/echo"
@@ -21,6 +22,7 @@ func main() {
 	log.SetOutput(os.Stdout)
 	log.SetLevel(log.DebugLevel)
 	e := echo.New()
+	e.Server.ReadTimeout = time.Second * 5
 	e.Pre(middleware.RemoveTrailingSlash())
 	// XSS
 	e.Use(middleware.Secure())
