@@ -10,7 +10,7 @@ pipeline {
         string(name: 'hub_domain', defaultValue: 'hub.k8s.com', description: 'docker 私有仓库域')
         string(name: 'project_name', defaultValue: 'cms', description: '项目名称')
         string(name: 'namespace_name', defaultValue: 'cms', description: 'namespace名称')
-        string(name: 'deployment_name', defaultValue: 'backend', description: 'deployment 名称')
+        string(name: 'deployment_name', defaultValue: 'backend-deployment', description: 'deployment 名称')
         string(name: 'container_name', defaultValue: 'backend', description: '容器名称')
     }
     tools {go "go1.12"}
