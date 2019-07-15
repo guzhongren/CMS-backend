@@ -1,11 +1,11 @@
 pipeline {
     agent any
     environment { 
-        HUB_DOMAIN = 'hub.k8s.com', // 'docker 私有仓库域'
-        PROJECT_NAME = 'cms', // 项目名称
-        NAMESPACE_NAME = 'cms', // namespace名称
-        DEPLOYMENT_NAME = 'backend', // deployment 名称
-        CONTAINER_NAME = 'backend', // 容器名称
+        HUB_DOMAIN = 'hub.k8s.com' // 'docker 私有仓库域'
+        PROJECT_NAME = 'cms' // 项目名称
+        NAMESPACE_NAME = 'cms' // namespace名称
+        DEPLOYMENT_NAME = 'backend' // deployment 名称
+        CONTAINER_NAME = 'backend' // 容器名称
     }
     tools {go "go1.12"}
     stages {
