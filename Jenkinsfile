@@ -31,7 +31,8 @@ pipeline {
         }
         stage('构建并推送镜像') {
             steps{
-                echo '开始构建镜像。。。'
+                echo '开始构建镜像...'
+                sh "go build -o cms"
                 withCredentials([usernamePassword(credentialsId: 'docker-register', passwordVariable: 'dockerPassword', usernameVariable: 'dockerUser')]) {
                     sh "./build_script/build_image.sh ${params.hub_domain} ${dockerUser} ${dockerPassword} ${params.project_name} ${params.container_name}"
                 }
