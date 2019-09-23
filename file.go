@@ -58,3 +58,9 @@ func (file File) Delete(c echo.Context) error {
 		})
 	}
 }
+
+// Look 查看文件
+func (file File) Look(c echo.Context) error {
+	id := c.Param("id")
+	return c.File(conf.APP.StaticPath.Local + "/" + id)
+}

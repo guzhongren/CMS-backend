@@ -1,10 +1,10 @@
 package main
 
 import (
-	"os"
-	"net/http"
-	"time"
 	"database/sql"
+	"net/http"
+	"os"
+	"time"
 
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -14,6 +14,7 @@ import (
 
 var db = new(sql.DB)
 var conf = new(Conf)
+
 func main() {
 	utils := Utils{}
 	utils.LoadConfig()
@@ -56,7 +57,8 @@ func main() {
 
 	h := &handler{}
 	apiGroup := e.Group("/api/" + conf.Version)
-	apiGroup.Static(conf.APP.StaticPath.Http, conf.APP.StaticPath.Local)
+	// apiGroup.Static(conf.APP.StaticPath.Http, conf.APP.StaticPath.Local)
+	apiGroup.GET(conf.APP.StaticPath.Http+"/:id", file.Look)
 
 	apiGroup.POST("/login", auth.Login)
 	apiGroup.GET("/statistic", system.Statistic, IsLoggedIn)
