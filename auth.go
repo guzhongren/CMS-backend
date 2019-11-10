@@ -10,6 +10,10 @@ import (
 )
 
 type Auth struct{}
+type LoginState struct {
+	Token    string       `json:"token"`
+	UserInfo UserResponse `json:"userInfo"`
+}
 
 func (auth Auth) skipper(c echo.Context) bool {
 	method := c.Request().Method
@@ -38,7 +42,18 @@ func (auth Auth) checkUserAuth(userName string, password string) (UserResponse, 
 	return userInfo, nil
 }
 
-// 登录
+// Login godoc
+// @Summary Login
+// @tags Auth
+// @Description Login Description
+// @Accept  multipart/form-data
+// @Produce  json
+// @Param name formData string true "用户"
+// @Param password formData string true "mima"
+// @Success 200 {object} LoginState
+// @Header 200 {string} Token "token"
+// @Failure 400 {object} Response "需要用户名和密码"
+// @Router /login/ [post]
 func (auth Auth) Login(c echo.Context) error {
 	u := new(User)
 	if err := c.Bind(u); err != nil {
@@ -63,10 +78,6 @@ func (auth Auth) Login(c echo.Context) error {
 				Result:  "",
 				Message: "请获取 token 并在 HEADER 中设置 token!",
 			})
-		}
-		type LoginState struct {
-			Token    string       `json:"token"`
-			UserInfo UserResponse `json:"userInfo"`
 		}
 		return c.JSON(http.StatusOK, &Response{
 			Success: true,

@@ -6,12 +6,13 @@ import (
 	"os"
 	"time"
 
+	"github.com/guzhongren/CMS-backend/docs"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
-	"github.com/swaggo/echo-swagger"
-	_ "github.com/swaggo/echo-swagger/example/docs"
+	echoSwagger "github.com/swaggo/echo-swagger"
+	// _ "github.com/guzhongren/CMS-backend/docs"
 )
 
 // @title Swagger Example API
@@ -27,7 +28,7 @@ import (
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host petstore.swagger.io
-// @BasePath /v2
+// @BasePath /api/v1
 
 var db = new(sql.DB)
 var conf = new(Conf)
@@ -74,6 +75,13 @@ func main() {
 	dbInfo := conf.DB
 	db = getDB(dbInfo.Host, dbInfo.Port, dbInfo.Username, dbInfo.Password, dbInfo.Db)
 	defer db.Close()
+
+	docs.SwaggerInfo.Title = "CMS"
+	docs.SwaggerInfo.Description = "This is a sample server Petstore server."
+	docs.SwaggerInfo.Version = "1.0"
+	docs.SwaggerInfo.Host = "localhost:1234"
+	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.Schemes = []string{"http", "https"}
 
 	e.GET("/swagger/*", echoSwagger.WrapHandler)
 

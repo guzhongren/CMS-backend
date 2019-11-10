@@ -9,6 +9,11 @@ import (
 	log "github.com/sirupsen/logrus"
 )
 
+type LoginUser struct {
+	Name     string `json:"name"`
+	Password string `json:"password"`
+}
+
 type User struct {
 	ID         string `json:"id"`
 	Name       string `json:"name"`
