@@ -10,9 +10,9 @@ require (
 	github.com/labstack/echo v3.3.10+incompatible
 	github.com/lib/pq v1.0.0
 	github.com/mattn/echo-livereload v0.0.0-20190209171218-a46420566cdb
-	github.com/mattn/go-colorable v0.1.0 // indirect
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.3.0
+	github.com/swaggo/echo-swagger v0.0.0-20190329130007-1219b460a043 // indirect
 	github.com/tsuyoshiwada/go-gitcmd v0.0.0-20180205145712-5f1f5f9475df // indirect
 	github.com/urfave/cli v1.20.0 // indirect
 	golang.org/x/crypto v0.0.0-20190211182817-74369b46fc67 // indirect

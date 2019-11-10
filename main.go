@@ -6,11 +6,28 @@ import (
 	"os"
 	"time"
 
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	_ "github.com/lib/pq"
 	log "github.com/sirupsen/logrus"
+	"github.com/swaggo/echo-swagger"
+	_ "github.com/swaggo/echo-swagger/example/docs"
 )
+
+// @title Swagger Example API
+// @version 1.0
+// @description This is a sample server Petstore server.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.url http://www.swagger.io/support
+// @contact.email support@swagger.io
+
+// @license.name Apache 2.0
+// @license.url http://www.apache.org/licenses/LICENSE-2.0.html
+
+// @host petstore.swagger.io
+// @BasePath /v2
 
 var db = new(sql.DB)
 var conf = new(Conf)
@@ -36,6 +53,11 @@ func main() {
 		AllowMethods: []string{echo.GET, echo.HEAD, echo.PUT, echo.PATCH, echo.POST, echo.DELETE},
 	}))
 
+	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
+		Root:   conf.APP.StaticPath.Http,
+		Browse: true,
+	}))
+
 	auth := Auth{}
 	user := User{}
 	role := Role{}
@@ -44,11 +66,16 @@ func main() {
 	file := File{}
 	var IsLoggedIn = middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningKey: []byte(conf.Secret),
-		Skipper:    auth.skipper,
+		// Skipper:    auth.skipper,
+		Skipper: func(c echo.Context) bool {
+			return true
+		},
 	})
 	dbInfo := conf.DB
 	db = getDB(dbInfo.Host, dbInfo.Port, dbInfo.Username, dbInfo.Password, dbInfo.Db)
 	defer db.Close()
+
+	e.GET("/swagger/*", echoSwagger.WrapHandler)
 
 	e.GET("/test", func(c echo.Context) error {
 		return c.JSON(http.StatusOK, "Hello! Welcome to CMS!")
@@ -57,8 +84,9 @@ func main() {
 
 	h := &handler{}
 	apiGroup := e.Group("/api/" + conf.Version)
+	apiGroup.Use(IsLoggedIn)
 	// apiGroup.Static(conf.APP.StaticPath.Http, conf.APP.StaticPath.Local)
-	apiGroup.GET(conf.APP.StaticPath.Http+"/:id", file.Look)
+	// apiGroup.GET(conf.APP.StaticPath.Http+"/:id", file.Look)
 
 	apiGroup.POST("/login", auth.Login)
 	apiGroup.GET("/statistic", system.Statistic, IsLoggedIn)
