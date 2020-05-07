@@ -5,11 +5,12 @@ cms:
       - http://localhost:8080
       - http://127.0.0.1:8080
       - http://127.0.0.1:1234
+      - http://127.0.0.1:12345
     staticPath: 
       http: /static
       local: assets
   db:
-    host: localhost
+    host: db
     port: 5432
     username: postgres
     password: 000000

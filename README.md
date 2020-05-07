@@ -3,8 +3,14 @@
 ## Dev
 
 ```shell
-$ go run *.go
+$ make go
 ......
+```
+
+## 生成swagger
+
+```shell
+$ make swagger
 ```
 
 ## CHANGELOG 生成
