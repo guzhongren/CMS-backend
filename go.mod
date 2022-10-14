@@ -11,5 +11,5 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/swaggo/echo-swagger v0.0.0-20190329130007-1219b460a043
 	github.com/swaggo/swag v1.6.3
-	gopkg.in/yaml.v2 v2.2.5
+	gopkg.in/yaml.v2 v2.2.8
 )
